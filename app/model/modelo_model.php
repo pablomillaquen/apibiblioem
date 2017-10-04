@@ -3,6 +3,7 @@ namespace App\Model;
 
 use App\Lib\Database;
 use App\Lib\Response;
+use PiramideUploader;
 
 class ModeloModel
 {
@@ -129,19 +130,21 @@ class ModeloModel
             if(isset($_FILES['uploads'])){
                 $piramideUploader = new PiramideUploader();
 
-                $upload = $piramideUploader->upload('image', "uploads"), array('image/jpeg', 'image/png', 'image/gif');
+                $upload = $piramideUploader->upload('image', 'uploads', '../uploads/fotos', array('image/jpeg', 'image/png', 'image/gif'));
                 $file = $piramideUploader->getInfoFile();
                 $file_name = $file['complete_name'];
 
-                var_dump($file);
+                //var_dump($file);
 
             }
-            // $stm = $this->db->prepare("CALL SP_MODELO_del(:id)");
-            // $stm->bindParam(':id', $id);
-            // $stm->execute();
-            
-            // $this->response->setResponse(true);
-            // return $this->response;
+           if(isset($upload) && $upload["uploaded"] == false){
+                //$result DEBO ENVIAR EL DATO NAME DEL ARCHIVO
+                $this->response->setResponse(true);
+                $this->response->result = $result;
+                return $this->response;
+            }else{
+                $this->response->setResponse(false, "Ocurrió un error al subir el archivo");
+            }
         } catch (Exception $e) 
         {
             $this->response->setResponse(false, $e->getMessage());
