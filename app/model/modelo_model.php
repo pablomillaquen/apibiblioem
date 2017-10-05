@@ -73,7 +73,12 @@ class ModeloModel
                 $stm->bindParam(':nombre', $data['nombre']);
                 $stm->bindParam(':idTipo', $data['idTipo']);
                 $stm->bindParam(':idMarca', $data['idMarca']);
-                $stm->bindParam(':foto', $data['foto']);
+                //$stm->bindParam(':foto', $data['foto']);
+                if(isset($data['foto'])){
+                    $stm->bindParam(':foto', $data['foto']);    
+                }else{
+                    $stm->bindParam(':foto', "");
+                };
                 $stm->bindParam(':FechaModificacion', $date);
                 $stm->execute();
                 $this->response->setResponse(true);
@@ -90,7 +95,12 @@ class ModeloModel
                 $stm->bindParam(':nombre', $data['nombre']);
                 $stm->bindParam(':idTipo', $data['idTipo']);
                 $stm->bindParam(':idMarca', $data['idMarca']);
-                $stm->bindParam(':foto', $data['foto']);
+                //$stm->bindParam(':foto', $data['foto']);
+                if(isset($data['foto'])){
+                    $stm->bindParam(':foto', $data['foto']);    
+                }else{
+                    $stm->bindParam(':foto', "");
+                };
                 $stm->bindParam(':FechaCreacion', $date);
                 $stm->bindParam(':FechaModificacion', $date);
                 $stm->execute();
@@ -138,12 +148,14 @@ class ModeloModel
 
             }
            if(isset($upload) && $upload["uploaded"] == false){
-                //$result DEBO ENVIAR EL DATO NAME DEL ARCHIVO
-                $this->response->setResponse(true);
+                $this->response->setResponse(false, "Ocurrió un error al subir el archivo");
                 $this->response->result = $result;
                 return $this->response;
             }else{
-                $this->response->setResponse(false, "Ocurrió un error al subir el archivo");
+                //$result =
+                $this->response->setResponse(true);
+                $this->response->result = array('filename'=>$file_name); 
+                return $this->response;
             }
         } catch (Exception $e) 
         {
