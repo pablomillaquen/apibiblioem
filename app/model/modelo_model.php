@@ -67,18 +67,13 @@ class ModeloModel
             
              if(isset($data['id']))
             {   
-                $stm = $this->db->prepare("CALL SP_MODELO_upd(:id,:nombre,:idTipo,:idMarca,:foto,:FechaModificacion)");
+                $stm = $this->db->prepare("CALL SP_MODELO_upd(:nombre,:idTipo,:idMarca,:foto,:FechaModificacion,:id)");
                 $date = date('Y-m-d H:i:s');
                 $stm->bindParam(':id', $data['id']);
                 $stm->bindParam(':nombre', $data['nombre']);
                 $stm->bindParam(':idTipo', $data['idTipo']);
                 $stm->bindParam(':idMarca', $data['idMarca']);
-                //$stm->bindParam(':foto', $data['foto']);
-                if(isset($data['foto'])){
-                    $stm->bindParam(':foto', $data['foto']);    
-                }else{
-                    $stm->bindParam(':foto', "");
-                };
+                $stm->bindParam(':foto', $data['foto']);
                 $stm->bindParam(':FechaModificacion', $date);
                 $stm->execute();
                 $this->response->setResponse(true);
@@ -89,18 +84,13 @@ class ModeloModel
             }
             else
             {   
-
+                
                 $stm = $this->db->prepare("CALL SP_MODELO_Ins(:nombre,:idTipo,:idMarca,:foto,:FechaCreacion,:FechaModificacion)");
                 $date = date('Y-m-d H:i:s');
                 $stm->bindParam(':nombre', $data['nombre']);
                 $stm->bindParam(':idTipo', $data['idTipo']);
                 $stm->bindParam(':idMarca', $data['idMarca']);
-                //$stm->bindParam(':foto', $data['foto']);
-                if(isset($data['foto'])){
-                    $stm->bindParam(':foto', $data['foto']);    
-                }else{
-                    $stm->bindParam(':foto', "");
-                };
+                $stm->bindParam(':foto', $data['foto']);
                 $stm->bindParam(':FechaCreacion', $date);
                 $stm->bindParam(':FechaModificacion', $date);
                 $stm->execute();
@@ -138,6 +128,7 @@ class ModeloModel
         try 
         { 
             if(isset($_FILES['uploads'])){
+                //var_dump($_FILES['uploads']);
                 $piramideUploader = new PiramideUploader();
 
                 $upload = $piramideUploader->upload('image', 'uploads', '../uploads/fotos', array('image/jpeg', 'image/png', 'image/gif'));
@@ -154,7 +145,9 @@ class ModeloModel
             }else{
                 //$result =
                 $this->response->setResponse(true);
-                $this->response->result = array('filename'=>$file_name); 
+                //$this->response->result = array('filename'=>$file_name); 
+                $this->response->result = $file_name; 
+                //$this->response->result = array(array('filename'=>$file_name)); 
                 return $this->response;
             }
         } catch (Exception $e) 
