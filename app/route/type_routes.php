@@ -14,7 +14,7 @@ $app->group('/v1', function () use ($app){
                        ->write('Hello desde employee');
         });
         
-        $this->get('getAll/{l}/{p}', function ($req, $res, $args) {
+        $this->get('getAll/', function ($req, $res, $args) {
             $um = new TypeModel();
             
             return $res
@@ -82,7 +82,7 @@ $app->group('/v1', function () use ($app){
       });
         
     });
-  })->add(new AuthMiddleware($app));
+  });//->add(new AuthMiddleware($app));
   
   $app->group('/user', function () use ($app){
     $app->group('/type/', function ()  use ($app){

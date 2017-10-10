@@ -7,7 +7,7 @@ use App\Lib\Response;
 class TypeModel
 {
     private $db;
-    private $table = 'PM_TIPopaquete';
+    private $table = 'pm_tipoequipo';
     private $response;
     
     public function __CONSTRUCT()
@@ -16,15 +16,13 @@ class TypeModel
         $this->response = new Response();
     }
     
-    public function GetAll($l,$p)
+    public function GetAll()
     {
 		try
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("CALL SP_TIPO_Lista(:l,:p)");
-            $stm->bindParam(':l', $l);
-            $stm->bindParam(':p', $p);
+			$stm = $this->db->prepare("CALL SP_TIPOEQUIPO_sel()");
 			$stm->execute();
             
 			$this->response->setResponse(true);
@@ -39,14 +37,14 @@ class TypeModel
 		}
     }
     
-    public function Get($idTipo)
+    public function Get($id)
     {
 		try
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("CALL SP_TIPO_Sel(:id)");
-			$stm->bindParam(':id', $idTipo);
+			$stm = $this->db->prepare("CALL SP_TIPOEQUIPO_sel1(:id)");
+			$stm->bindParam(':id', $id);
             $stm->execute();
 
 			$this->response->setResponse(true);
@@ -65,26 +63,24 @@ class TypeModel
     {
 		try 
 		{
-            if(isset($data['idTipo']))
+            if(isset($data['id']))
             {   
-                $stm = $this->db->prepare("CALL SP_TIPO_Upd(:idTipo,:NombreEs,:NombreEn,:fechaCreacion,:fechaModificacion)");
+                $stm = $this->db->prepare("CALL SP_TIPOEQUIPO_upd(:nombre,:fechamodificacion,:id)");
                 $date = date('Y-m-d H:i:s');
-                $stm->bindParam(':idTipo', $data['idTipo']);
-                $stm->bindParam(':NombreEs', $data['NombreEs']);
-                $stm->bindParam(':NombreEn', $data['NombreEn']);
-                $stm->bindParam(':fechaModificacion', $date);
+                $stm->bindParam(':id', $data['id']);
+                $stm->bindParam(':nombre', $data['nombre']);
+                $stm->bindParam(':fechamodificacion', $date);
                 $stm->execute();
 
                
             }
             else
             {   
-                $stm = $this->db->prepare("CALL SP_TIPO_Ins(:NombreEs,:NombreEn,:fechaCreacion,:fechaModificacion)");
+                $stm = $this->db->prepare("CALL SP_TIPOEQUIPO_ins(:nombre,:fechaCreacion,:fechamodificacion)");
                 $date = date('Y-m-d H:i:s');
-                $stm->bindParam(':NombreEs', $data['NombreEs']);
-                $stm->bindParam(':NombreEn', $data['NombreEn']);
+                $stm->bindParam(':nombre', $data['nombre']);
                 $stm->bindParam(':fechaCreacion', $date);
-                $stm->bindParam(':fechaModificacion', $date);
+                $stm->bindParam(':fechamodificacion', $date);
                 $stm->execute();
                
             }
@@ -97,12 +93,12 @@ class TypeModel
 		}
     }
     
-    public function Delete($idTipo)
+    public function Delete($id)
     {
 		try 
 		{
-            $stm = $this->db->prepare("CALL SP_TIPO_Del(:idTipo)");
-            $stm->bindParam(':idTipo', $idTipo);
+            $stm = $this->db->prepare("CALL SP_TIPOEQUIPO_del(:id)");
+            $stm->bindParam(':id', $id);
             $stm->execute();
 			
 			$this->response->setResponse(true);
@@ -113,24 +109,24 @@ class TypeModel
 		}
     }
 
-     public function GetDropdown()
-    {
-        try
-        {
-            $result = array();
+    //  public function GetDropdown()
+    // {
+    //     try
+    //     {
+    //         $result = array();
 
-            $stm = $this->db->prepare("CALL SP_TIPO_ListaCompleta()");
-            $stm->execute();
+    //         $stm = $this->db->prepare("CALL SP_TIPOEQUIPO_ListaCompleta()");
+    //         $stm->execute();
 
-            $this->response->setResponse(true);
-            $this->response->result = $stm->fetchAll();
+    //         $this->response->setResponse(true);
+    //         $this->response->result = $stm->fetchAll();
             
-            return $this->response;
-        }
-        catch(Exception $e)
-        {
-            $this->response->setResponse(false, $e->getMessage());
-            return $this->response;
-        }  
-    }
+    //         return $this->response;
+    //     }
+    //     catch(Exception $e)
+    //     {
+    //         $this->response->setResponse(false, $e->getMessage());
+    //         return $this->response;
+    //     }  
+    // }
 }
