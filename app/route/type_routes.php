@@ -22,7 +22,7 @@ $app->group('/v1', function () use ($app){
                ->getBody()
                ->write(
                 json_encode(
-                    $um->GetAll($args['l'],$args['p'])
+                    $um->GetAll()
                 )
             );
         });
