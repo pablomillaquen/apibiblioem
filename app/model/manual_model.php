@@ -59,6 +59,28 @@ class ManualModel
             return $this->response;
 		}  
     }
+
+    public function GetxMod($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("CALL SP_MANUAL_selxmodelo(:id)");
+            $stm->bindParam(':id', $id);
+            $stm->execute();
+
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetch();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }  
+    }
     
     public function InsertOrUpdate($data)
     {
