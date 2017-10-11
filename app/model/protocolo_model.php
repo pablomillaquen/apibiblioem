@@ -5,10 +5,10 @@ use App\Lib\Database;
 use App\Lib\Response;
 use PiramideUploader;
 
-class ManualModel
+class ProtocoloModel
 {
     private $db;
-    private $table = 'pm_manual';
+    private $table = 'pm_protocolo';
     private $response;
     
     public function __CONSTRUCT()
@@ -23,7 +23,7 @@ class ManualModel
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("CALL SP_MANUAL_sel()");
+			$stm = $this->db->prepare("CALL SP_PROTOCOLO_sel()");
 			$stm->execute();
             
             $this->response->setResponse(true);
@@ -44,7 +44,7 @@ class ManualModel
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("CALL SP_MANUAL_sel1(:id)");
+			$stm = $this->db->prepare("CALL SP_PROTOCOLO_sel1(:id)");
 			$stm->bindParam(':id', $id);
             $stm->execute();
 
@@ -66,7 +66,7 @@ class ManualModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("CALL SP_MANUAL_selxmodelo(:id)");
+            $stm = $this->db->prepare("CALL SP_PROTOCOLO_selxmodelo(:id)");
             $stm->bindParam(':id', $id);
             $stm->execute();
 
@@ -89,10 +89,9 @@ class ManualModel
             
              if(isset($data['id']))
             {   
-                $stm = $this->db->prepare("CALL SP_MANUAL_upd(:nombre,:ubicacion,:url,:idModelo,:FechaModificacion,:id)");
+                $stm = $this->db->prepare("CALL SP_PROTOCOLO_upd(:nombre,:url,:idModelo,:FechaModificacion,:id)");
                 $date = date('Y-m-d H:i:s');
                 $stm->bindParam(':nombre', $data['nombre']);
-                $stm->bindParam(':ubicacion', $data['ubicacion']);
                 $stm->bindParam(':url', $data['url']);
                 $stm->bindParam(':idModelo', $data['idModelo']);
                 $stm->bindParam(':FechaModificacion', $date);
@@ -107,10 +106,9 @@ class ManualModel
             else
             {   
                 
-                $stm = $this->db->prepare("CALL SP_MANUAL_ins(:nombre,:ubicacion,:url,:idModelo,:FechaCreacion,:FechaModificacion)");
+                $stm = $this->db->prepare("CALL SP_PROTOCOLO_ins(:nombre,:url,:idModelo,:FechaCreacion,:FechaModificacion)");
                 $date = date('Y-m-d H:i:s');
                 $stm->bindParam(':nombre', $data['nombre']);
-                $stm->bindParam(':ubicacion', $data['ubicacion']);
                 $stm->bindParam(':url', $data['url']);
                 $stm->bindParam(':idModelo', $data['idModelo']);
                 $stm->bindParam(':FechaCreacion', $date);
@@ -133,7 +131,7 @@ class ManualModel
     {
 		try 
 		{
-            $stm = $this->db->prepare("CALL SP_MANUAL_del(:id)");
+            $stm = $this->db->prepare("CALL SP_PROTOCOLO_del(:id)");
             $stm->bindParam(':id', $id);
             $stm->execute();
 			
@@ -153,7 +151,7 @@ class ManualModel
                 //var_dump($_FILES['uploads']);
                 $piramideUploader = new PiramideUploader();
 
-                $upload = $piramideUploader->upload('manual', 'uploads', '../uploads/manuales', array('application/msword', 'application/excel', 'application/pdf'));
+                $upload = $piramideUploader->upload('manual', 'uploads', '../uploads/protocolos', array('application/msword', 'application/excel', 'application/pdf','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
                 $file = $piramideUploader->getInfoFile();
                 $file_name = $file['complete_name'];
 
@@ -162,7 +160,7 @@ class ManualModel
             }
            if(isset($upload) && $upload["uploaded"] == false){
                 $this->response->setResponse(false, "Ocurrió un error al subir el archivo");
-                $this->response->result = $result;
+                //$this->response->result = $result;
                 return $this->response;
             }else{
                 //$result =

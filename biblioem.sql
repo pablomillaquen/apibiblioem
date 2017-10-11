@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost:3306
--- Tiempo de generación: 11-10-2017 a las 09:05:42
--- Versión del servidor: 5.7.19-0ubuntu0.17.04.1
--- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 11-10-2017 a las 22:57:46
+-- Versión del servidor: 10.1.19-MariaDB
+-- Versión de PHP: 5.6.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -352,6 +354,79 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_upd` (IN `p_MOD_id` INT,
     (`REP_id` = `p_REP_id`);
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PROTOCOLO_del` (IN `id` INT)  NO SQL
+BEGIN
+  UPDATE `pm_protocolo` SET
+    `PRO_estado` = 0
+  WHERE 
+    (`PRO_id` = id);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PROTOCOLO_ins` (IN `nombre` VARCHAR(50), IN `url` VARCHAR(250), IN `idModelo` INT, IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  NO SQL
+BEGIN
+  INSERT INTO `pm_protocolo`
+  (
+    `PRO_nombre`,
+    `PRO_url`,
+    `MOD_id`,
+    `PRO_fechacreacion`,
+    `PRO_fechamodificacion`,
+    `PRO_estado`
+  )
+  VALUES 
+  (
+    nombre,
+    url,
+    idModelo,
+    fechacreacion,
+    fechamodificacion,
+    1
+  );
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PROTOCOLO_sel` ()  NO SQL
+BEGIN
+  SELECT
+    pr.`PRO_id` as id,
+    pr.`PRO_nombre` as nombre,
+    pr.`PRO_url` as url,
+    pr.`MOD_id` as idModelo,
+    mo.`MOD_nombre` as modelo
+  FROM `pm_protocolo` as pr
+  INNER JOIN `pm_modelo` as mo
+  ON mo.`MOD_id`=pr.`MOD_id`
+  WHERE `PRO_estado` = 1
+  ORDER BY `PRO_nombre` ASC;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PROTOCOLO_selxmodelo` (IN `idModelo` INT)  NO SQL
+BEGIN
+  SELECT
+    pr.`PRO_id` as id,
+    pr.`PRO_nombre` as nombre,
+    pr.`PRO_url` as url,
+    pr.`MOD_id` as idModelo,
+    mo.`MOD_nombre` as modelo
+  FROM `pm_protocolo` as pr
+  INNER JOIN `pm_modelo` as mo
+  ON mo.`MOD_id`=pr.`MOD_id`
+  WHERE pr.`PRO_estado` = 1
+  AND pr.`MOD_id` = idModelo
+  ORDER BY pr.`PRO_nombre` ASC;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PROTOCOLO_upd` (IN `nombre` VARCHAR(50), IN `url` VARCHAR(250), IN `idModelo` INT, IN `fechamodificacion` DATETIME, IN `id` INT)  NO SQL
+BEGIN
+  UPDATE `pm_protocolo` SET
+    `PRO_nombre` = nombre,
+    `PRO_url` = url,
+    `MOD_id` = idModelo,
+    `PRO_fechamodificacion` = fechamodificacion,
+    `PRO_estado` = 1
+  WHERE 
+    (`PRO_id` = id);
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_del` (IN `p_REP_id` INT)  BEGIN
   DELETE FROM `pm_repuesto`
   WHERE     
@@ -454,13 +529,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TIPOEQUIPO_upd` (IN `nombre` VAR
     (`TIP_id` = id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_del` (IN `p_TOR_id` INT)  BEGIN
-  DELETE FROM `pm_torpedo`
-  WHERE     
-    (`TOR_id` = `p_TOR_id`);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_del` (IN `id` INT)  BEGIN
+  UPDATE `pm_torpedo` SET
+    `TOR_estado` = 0
+  WHERE 
+    (`TOR_id` = id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_ins` (IN `p_TOR_titulo` VARCHAR(45), IN `p_TOR_descripcion` LONGTEXT, IN `p_PM_MODelo_MOD_id` INT, IN `p_TOR_fechacreacion` DATETIME, IN `p_TOR_fechamodificacion` DATETIME, IN `p_TOR_estado` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_ins` (IN `titulo` VARCHAR(45), IN `descripcion` LONGTEXT, IN `idModelo` INT, IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  BEGIN
   INSERT INTO `pm_torpedo`
   (
     `TOR_titulo`,
@@ -472,39 +548,60 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_ins` (IN `p_TOR_titulo` 
   )
   VALUES 
   (
-    `p_TOR_titulo`,
-    `p_TOR_descripcion`,
-    `p_PM_MODelo_MOD_id`,
-    `p_TOR_fechacreacion`,
-    `p_TOR_fechamodificacion`,
-    `p_TOR_estado`
+    titulo,
+    descripcion,
+    idModelo,
+    fechacreacion,
+    fechamodificacion,
+    1
   );
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_sel` (IN `l` INT, IN `p` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_sel` ()  BEGIN
   SELECT
-    `TOR_id`,
-    `TOR_titulo`,
-    `TOR_descripcion`,
-    `PM_MODelo_MOD_id`,
-    `TOR_fechacreacion`,
-    `TOR_fechamodificacion`,
-    `TOR_estado`
-  FROM `pm_torpedo`
-  LIMIT l
-  OFFSET p;
+    tor.`TOR_id`,
+    tor.`TOR_titulo`,
+    tor.`TOR_descripcion`,
+    tor.`MOD_id`,
+    mo.`MOD_nombre` as modelo
+  FROM `pm_torpedo` as tor
+  INNER JOIN `pm_modelo` as mo
+  ON mo.`MOD_id`=tor.`Mod_id`
+  WHERE `TOR_estado` = 1
+  ORDER BY `TOR_nombre` ASC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_upd` (IN `p_TOR_id` INT, IN `p_TOR_titulo` VARCHAR(45), IN `p_TOR_descripcion` LONGTEXT, IN `p_PM_MODelo_MOD_id` INT, IN `p_TOR_fechacreacion` DATETIME, IN `p_TOR_fechamodificacion` DATETIME, IN `p_TOR_estado` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_sel1` (IN `id` INT)  NO SQL
+BEGIN
+  SELECT * FROM `pm_torpedo`
+  WHERE     
+    (`TOR_id` = id);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_selxmodelo` (IN `idModelo` INT)  NO SQL
+BEGIN
+  SELECT
+    tor.`TOR_id` as id,
+    tor.`TOR_titulo` as titulo,
+    tor.`TOR_descripcion` as descripcion,
+    tor.`MOD_id` as idModelo,
+    mo.`MOD_nombre` as modelo
+  FROM `pm_torpedo` as tor
+  INNER JOIN `pm_modelo` as mo
+  ON mo.`MOD_id`=tor.`MOD_id`
+  WHERE tor.`TOR_estado` = 1
+  AND tor.`MOD_id` = idModelo
+  ORDER BY tor.`TOR_titulo` ASC;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_upd` (IN `titulo` VARCHAR(45), IN `descripcion` LONGTEXT, IN `idModelo` INT, IN `fechamodificacion` DATETIME, IN `id` INT)  BEGIN
   UPDATE `pm_torpedo` SET
-    `TOR_titulo` = `p_TOR_titulo`,
-    `TOR_descripcion` = `p_TOR_descripcion`,
-    `PM_MODelo_MOD_id` = `p_PM_MODelo_MOD_id`,
-    `TOR_fechacreacion` = `p_TOR_fechacreacion`,
-    `TOR_fechamodificacion` = `p_TOR_fechamodificacion`,
-    `TOR_estado` = `p_TOR_estado`
+    `TOR_titulo` = titulo,
+    `TOR_descripcion` = descripcion,
+    `PM_MODelo_MOD_id` = idModelo,
+    `TOR_fechamodificacion` = fechamodificacion
   WHERE 
-    (`TOR_id` = `p_TOR_id`);
+    (`TOR_id` = id);
 END$$
 
 DELIMITER ;
@@ -673,6 +770,30 @@ CREATE TABLE `pm_mod_rep` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pm_protocolo`
+--
+
+CREATE TABLE `pm_protocolo` (
+  `PRO_id` int(11) NOT NULL,
+  `PRO_nombre` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `PRO_url` varchar(250) COLLATE utf8_spanish_ci NOT NULL,
+  `MOD_id` int(11) NOT NULL,
+  `PRO_fechacreacion` datetime NOT NULL,
+  `PRO_fechamodificacion` datetime NOT NULL,
+  `PRO_estado` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `pm_protocolo`
+--
+
+INSERT INTO `pm_protocolo` (`PRO_id`, `PRO_nombre`, `PRO_url`, `MOD_id`, `PRO_fechacreacion`, `PRO_fechamodificacion`, `PRO_estado`) VALUES
+(1, 'Protocolo Acreditación', 'manual-1507736908-Protocolo Interno Monitor.xlsx', 2, '2017-10-11 17:48:31', '2017-10-11 17:52:51', 1),
+(2, 'Protocolo Mantenimiento', 'manual-1507747411-Monitor Multiparametro.doc', 2, '2017-10-11 20:43:33', '2017-10-11 20:43:33', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `pm_repuesto`
 --
 
@@ -767,6 +888,12 @@ ALTER TABLE `pm_mod_rep`
   ADD KEY `fk_PM_MODelo_has_PM_REPuesto_PM_MODelo1_idx` (`MOD_id`);
 
 --
+-- Indices de la tabla `pm_protocolo`
+--
+ALTER TABLE `pm_protocolo`
+  ADD PRIMARY KEY (`PRO_id`);
+
+--
 -- Indices de la tabla `pm_repuesto`
 --
 ALTER TABLE `pm_repuesto`
@@ -794,36 +921,49 @@ ALTER TABLE `pm_torpedo`
 --
 ALTER TABLE `pm_empleado`
   MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_manual`
 --
 ALTER TABLE `pm_manual`
   MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_marca`
 --
 ALTER TABLE `pm_marca`
   MODIFY `MAR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_modelo`
 --
 ALTER TABLE `pm_modelo`
   MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `pm_protocolo`
+--
+ALTER TABLE `pm_protocolo`
+  MODIFY `PRO_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_repuesto`
 --
 ALTER TABLE `pm_repuesto`
   MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_tipoequipo`
 --
 ALTER TABLE `pm_tipoequipo`
   MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_torpedo`
 --
 ALTER TABLE `pm_torpedo`
   MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- Restricciones para tablas volcadas
 --
@@ -846,6 +986,7 @@ ALTER TABLE `pm_mod_rep`
 --
 ALTER TABLE `pm_torpedo`
   ADD CONSTRAINT `fk_PM_TORpedo_PM_MODelo1` FOREIGN KEY (`MOD_id`) REFERENCES `pm_modelo` (`MOD_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
