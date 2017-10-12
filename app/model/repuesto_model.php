@@ -5,10 +5,10 @@ use App\Lib\Database;
 use App\Lib\Response;
 use PiramideUploader;
 
-class ModeloModel
+class RepuestoModel
 {
     private $db;
-    private $table = 'pm_modelo';
+    private $table = 'pm_repuesto';
     private $response;
     
     public function __CONSTRUCT()
@@ -23,10 +23,10 @@ class ModeloModel
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("CALL SP_MODELO_sel()");
-			$stm->execute();
+			$stm = $this->db->prepare("CALL SP_REPUESTO_sel()");
+            $stm->execute();
             
-            $this->response->setResponse(true);
+			$this->response->setResponse(true);
             $this->response->result = $stm->fetchAll();
             
             return $this->response;
@@ -44,7 +44,7 @@ class ModeloModel
 		{
 			$result = array();
 
-			$stm = $this->db->prepare("CALL SP_MODELO_sel1(:id)");
+			$stm = $this->db->prepare("CALL SP_REPUESTO_selxId(:id)");
 			$stm->bindParam(':id', $id);
             $stm->execute();
 
@@ -63,44 +63,35 @@ class ModeloModel
     public function InsertOrUpdate($data)
     {
 		try 
-		{   
-            
-             if(isset($data['id']))
+		{
+            if(isset($data['id']))
             {   
-                $stm = $this->db->prepare("CALL SP_MODELO_upd(:nombre,:idTipo,:idMarca,:foto,:FechaModificacion,:id)");
+                $stm = $this->db->prepare("CALL SP_REPUESTO_upd(:nombre,:descripcion,:foto,:fechamodificacion,:id)");
                 $date = date('Y-m-d H:i:s');
-                $stm->bindParam(':id', $data['id']);
                 $stm->bindParam(':nombre', $data['nombre']);
-                $stm->bindParam(':idTipo', $data['idTipo']);
-                $stm->bindParam(':idMarca', $data['idMarca']);
+                $stm->bindParam(':descripcion', $data['descripcion']);
                 $stm->bindParam(':foto', $data['foto']);
-                $stm->bindParam(':FechaModificacion', $date);
+                $stm->bindParam(':fechamodificacion', $date);
+                $stm->bindParam(':id', $data['id']);
                 $stm->execute();
-                $this->response->setResponse(true);
-                
-                return $this->response;
 
                
             }
             else
             {   
-                
-                $stm = $this->db->prepare("CALL SP_MODELO_Ins(:nombre,:idTipo,:idMarca,:foto,:FechaCreacion,:FechaModificacion)");
+                $stm = $this->db->prepare("CALL SP_REPUESTO_ins(:nombre,:descripcion,:foto,:fechacreacion,:fechamodificacion)");
                 $date = date('Y-m-d H:i:s');
                 $stm->bindParam(':nombre', $data['nombre']);
-                $stm->bindParam(':idTipo', $data['idTipo']);
-                $stm->bindParam(':idMarca', $data['idMarca']);
+                $stm->bindParam(':descripcion', $data['descripcion']);
                 $stm->bindParam(':foto', $data['foto']);
-                $stm->bindParam(':FechaCreacion', $date);
-                $stm->bindParam(':FechaModificacion', $date);
+                $stm->bindParam(':fechacreacion', $date);
+                $stm->bindParam(':fechamodificacion', $date);
                 $stm->execute();
-                $this->response->setResponse(true);
-                
-                return $this->response;
                
             }
             
-            
+			$this->response->setResponse(true);
+            return $this->response;
 		}catch (Exception $e) 
 		{
             $this->response->setResponse(false, $e->getMessage());
@@ -111,7 +102,7 @@ class ModeloModel
     {
 		try 
 		{
-            $stm = $this->db->prepare("CALL SP_MODELO_del(:id)");
+            $stm = $this->db->prepare("CALL SP_REPUESTO_del(:id)");
             $stm->bindParam(':id', $id);
             $stm->execute();
 			
@@ -131,7 +122,7 @@ class ModeloModel
                 //var_dump($_FILES['uploads']);
                 $piramideUploader = new PiramideUploader();
 
-                $upload = $piramideUploader->upload('image', 'uploads', '../uploads/fotos', array('image/jpeg', 'image/png', 'image/gif'));
+                $upload = $piramideUploader->upload('repuesto', 'uploads', '../uploads/foto-repuestos', array('image/jpeg', 'image/png', 'image/gif'));
                 $file = $piramideUploader->getInfoFile();
                 $file_name = $file['complete_name'];
 

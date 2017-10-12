@@ -151,7 +151,7 @@ class ProtocoloModel
                 //var_dump($_FILES['uploads']);
                 $piramideUploader = new PiramideUploader();
 
-                $upload = $piramideUploader->upload('manual', 'uploads', '../uploads/protocolos', array('application/msword', 'application/excel', 'application/pdf','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
+                $upload = $piramideUploader->upload('protocolo', 'uploads', '../uploads/protocolos', array('application/msword', 'application/excel', 'application/pdf','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
                 $file = $piramideUploader->getInfoFile();
                 $file_name = $file['complete_name'];
 
