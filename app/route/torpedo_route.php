@@ -7,7 +7,7 @@ use App\Middleware\AuthClienteMiddleware;
 
 $app->group('/v1', function () use ($app){
   $app->group('/admin', function () use ($app){
-    $app->group('torpedo/', function () use ($app){
+    $app->group('/torpedo/', function () use ($app){
       
       $this->get('test', function ($req, $res, $args) {
           return $res->getBody()
