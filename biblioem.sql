@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.6.6deb4
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 12-10-2017 a las 23:01:48
--- Versión del servidor: 10.1.19-MariaDB
--- Versión de PHP: 5.6.28
+-- Servidor: localhost:3306
+-- Tiempo de generación: 13-10-2017 a las 08:50:04
+-- Versión del servidor: 5.7.19-0ubuntu0.17.04.1
+-- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -532,11 +530,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_del` (IN `id` INT)  BEGI
     (`TOR_id` = id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_ins` (IN `titulo` VARCHAR(45), IN `descripcion` LONGTEXT, IN `idModelo` INT, IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_ins` (IN `titulo` VARCHAR(45), IN `descripcion` LONGTEXT, IN `url` VARCHAR(100), IN `idModelo` INT, IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  BEGIN
   INSERT INTO `pm_torpedo`
   (
     `TOR_titulo`,
     `TOR_descripcion`,
+    `TOR_url`,
     `MOD_id`,
     `TOR_fechacreacion`,
     `TOR_fechamodificacion`,
@@ -546,6 +545,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_ins` (IN `titulo` VARCHA
   (
     titulo,
     descripcion,
+    url,
     idModelo,
     fechacreacion,
     fechamodificacion,
@@ -558,6 +558,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_sel` ()  BEGIN
     tor.`TOR_id` as id,
     tor.`TOR_titulo` as titulo,
     tor.`TOR_descripcion` as descripcion,
+    tor.`TOR_url` as url,
     tor.`MOD_id` as idModelo,
     mo.`MOD_nombre` as modelo
   FROM `pm_torpedo` as tor
@@ -580,6 +581,7 @@ BEGIN
     tor.`TOR_id` as id,
     tor.`TOR_titulo` as titulo,
     tor.`TOR_descripcion` as descripcion,
+    tor.`TOR_url` as url,
     tor.`MOD_id` as idModelo,
     mo.`MOD_nombre` as modelo
   FROM `pm_torpedo` as tor
@@ -590,10 +592,11 @@ BEGIN
   ORDER BY tor.`TOR_titulo` ASC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_upd` (IN `titulo` VARCHAR(45), IN `descripcion` LONGTEXT, IN `idModelo` INT, IN `fechamodificacion` DATETIME, IN `id` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_TORPEDO_upd` (IN `titulo` VARCHAR(45), IN `descripcion` LONGTEXT, IN `url` VARCHAR(100), IN `idModelo` INT, IN `fechamodificacion` DATETIME, IN `id` INT)  BEGIN
   UPDATE `pm_torpedo` SET
     `TOR_titulo` = titulo,
     `TOR_descripcion` = descripcion,
+    `TOR_url` = url,
     `MOD_id` = idModelo,
     `TOR_fechamodificacion` = fechamodificacion
   WHERE 
@@ -849,6 +852,7 @@ CREATE TABLE `pm_torpedo` (
   `TOR_id` int(11) NOT NULL,
   `TOR_titulo` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
   `TOR_descripcion` longtext COLLATE utf8_spanish_ci,
+  `TOR_url` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
   `MOD_id` int(11) NOT NULL,
   `TOR_fechacreacion` datetime DEFAULT NULL,
   `TOR_fechamodificacion` datetime DEFAULT NULL,
@@ -859,8 +863,9 @@ CREATE TABLE `pm_torpedo` (
 -- Volcado de datos para la tabla `pm_torpedo`
 --
 
-INSERT INTO `pm_torpedo` (`TOR_id`, `TOR_titulo`, `TOR_descripcion`, `MOD_id`, `TOR_fechacreacion`, `TOR_fechamodificacion`, `TOR_estado`) VALUES
-(1, 'Clave Instalación/Servicio', 'Instalación (16-4-34), Servicio (26-23-8).', 2, '2017-10-12 16:57:56', '2017-10-12 17:04:13', 1);
+INSERT INTO `pm_torpedo` (`TOR_id`, `TOR_titulo`, `TOR_descripcion`, `TOR_url`, `MOD_id`, `TOR_fechacreacion`, `TOR_fechamodificacion`, `TOR_estado`) VALUES
+(1, 'Clave Instalación/Servicio', 'Instalación (16-4-34), Servicio (26-23-8).', '', 2, '2017-10-12 16:57:56', '2017-10-12 17:04:13', 1),
+(2, 'Método solucionar error 008', 'abcdefg', 'torpedo-1507867088-Carta2013 (1).xls', 3, '2017-10-13 00:58:09', '2017-10-13 00:58:09', 1);
 
 --
 -- Índices para tablas volcadas
@@ -933,49 +938,41 @@ ALTER TABLE `pm_torpedo`
 --
 ALTER TABLE `pm_empleado`
   MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_manual`
 --
 ALTER TABLE `pm_manual`
   MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_marca`
 --
 ALTER TABLE `pm_marca`
   MODIFY `MAR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_modelo`
 --
 ALTER TABLE `pm_modelo`
   MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_protocolo`
 --
 ALTER TABLE `pm_protocolo`
   MODIFY `PRO_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_repuesto`
 --
 ALTER TABLE `pm_repuesto`
   MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_tipoequipo`
 --
 ALTER TABLE `pm_tipoequipo`
   MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_torpedo`
 --
 ALTER TABLE `pm_torpedo`
-  MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
+  MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- Restricciones para tablas volcadas
 --
@@ -998,7 +995,6 @@ ALTER TABLE `pm_mod_rep`
 --
 ALTER TABLE `pm_torpedo`
   ADD CONSTRAINT `fk_PM_TORpedo_PM_MODelo1` FOREIGN KEY (`MOD_id`) REFERENCES `pm_modelo` (`MOD_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
