@@ -153,7 +153,7 @@ class TorpedoModel
                 //var_dump($_FILES['uploads']);
                 $piramideUploader = new PiramideUploader();
 
-                $upload = $piramideUploader->upload('torpedo', 'uploads', '../uploads/protocolos', array('application/msword', 'application/excel', 'application/pdf','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
+                $upload = $piramideUploader->upload('apuntes', 'uploads', '../uploads/apuntes', array('text/plain', 'application/msword', 'application/excel', 'application/pdf','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'));
                 $file = $piramideUploader->getInfoFile();
                 $file_name = $file['complete_name'];
 

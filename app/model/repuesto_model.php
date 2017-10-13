@@ -59,6 +59,28 @@ class RepuestoModel
             return $this->response;
 		}  
     }
+
+    public function GetxMod($id)
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("CALL SP_REPUESTO_selxmodelo(:id)");
+            $stm->bindParam(':id', $id);
+            $stm->execute();
+
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }  
+    }
     
     public function InsertOrUpdate($data)
     {
@@ -66,9 +88,10 @@ class RepuestoModel
 		{
             if(isset($data['id']))
             {   
-                $stm = $this->db->prepare("CALL SP_REPUESTO_upd(:nombre,:descripcion,:foto,:fechamodificacion,:id)");
+                $stm = $this->db->prepare("CALL SP_REPUESTO_upd(:nombre,:referencia,:descripcion,:foto,:fechamodificacion,:id)");
                 $date = date('Y-m-d H:i:s');
                 $stm->bindParam(':nombre', $data['nombre']);
+                $stm->bindParam(':referencia', $data['referencia']);
                 $stm->bindParam(':descripcion', $data['descripcion']);
                 $stm->bindParam(':foto', $data['foto']);
                 $stm->bindParam(':fechamodificacion', $date);
@@ -79,9 +102,10 @@ class RepuestoModel
             }
             else
             {   
-                $stm = $this->db->prepare("CALL SP_REPUESTO_ins(:nombre,:descripcion,:foto,:fechacreacion,:fechamodificacion)");
+                $stm = $this->db->prepare("CALL SP_REPUESTO_ins(:nombre,:referencia,:descripcion,:foto,:fechacreacion,:fechamodificacion)");
                 $date = date('Y-m-d H:i:s');
                 $stm->bindParam(':nombre', $data['nombre']);
+                $stm->bindParam(':referencia', $data['referencia']);
                 $stm->bindParam(':descripcion', $data['descripcion']);
                 $stm->bindParam(':foto', $data['foto']);
                 $stm->bindParam(':fechacreacion', $date);

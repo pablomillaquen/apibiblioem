@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost:3306
--- Tiempo de generación: 13-10-2017 a las 08:50:04
--- Versión del servidor: 5.7.19-0ubuntu0.17.04.1
--- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 13-10-2017 a las 22:53:45
+-- Versión del servidor: 10.1.19-MariaDB
+-- Versión de PHP: 5.6.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -310,46 +312,56 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MODELO_upd` (IN `nombre` VARCHAR
     (`MOD_id` = id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_del` (IN `p_MOD_id` INT, IN `p_REP_id` INT)  BEGIN
-  DELETE FROM `pm_mod_rep`
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_del` (IN `idModelo` INT, IN `idRepuesto` INT)  BEGIN
+  UPDATE `pm_mod_rep` SET
+    `MOD_REP_estado` = 0
   WHERE     
-    (`MOD_id` = `p_MOD_id`) AND    
-    (`REP_id` = `p_REP_id`);
+    (`MOD_id` = idModelo) AND    
+    (`REP_id` = idRepuesto);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_ins` (IN `p_MOD_id` INT, IN `p_REP_id` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_ins` (IN `idModelo` INT, IN `idRepuesto` INT, IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  BEGIN
   INSERT INTO `pm_mod_rep`
   (
     `MOD_id`,
-    `REP_id`
+    `REP_id`,
+    `MOD_REP_fechacreacion`,
+    `MOD_REP_fechamodificacion`,
+    `MOD_REP_estado`
   )
   VALUES 
   (
-    `p_MOD_id`,
-    `p_REP_id`
+    idModelo,
+    idRepuesto,
+    fechacreacion,
+    fechamodificacion,
+    1
   );
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_sel` ()  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_selxmodelo` (IN `id` INT)  BEGIN
   SELECT
-    `MOD_id`,
-    `REP_id`,
-    `MOD_nombre`,
-    `REP_nombre`
-  FROM `pm_mod_rep`
-  INNER JOIN `pm_modelo` 
-  ON `pm_mod_rep`.`MOD_id`=`pm_modelo`.`MOD_id`
-  INNER JOIN `pm_repuesto` 
-  ON `pm_mod_rep`.`REP_id`=`pm_repuesto`.`REP_id`;
+    mr.`MOD_id`,
+    mr.`REP_id`,
+    re.`REP_nombre`,
+    re.`REP_referencia`,
+    re.`REP_foto`,
+    re.`REP_descripcion`
+  FROM `pm_mod_rep` as mr
+  INNER JOIN `pm_repuesto` as re 
+  ON mr.`REP_id`=re.`REP_id`
+  WHERE mr.`MOD_REP_estado`=1
+  AND mr.`MOD_id`=id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_upd` (IN `p_MOD_id` INT, IN `p_REP_id` INT, IN `par_MOD_id` INT, IN `par_REP_id` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_upd` (IN `idModeloorg` INT, IN `idRepuestoorg` INT, IN `idModelocam` INT, IN `idReferenciacam` INT, IN `fechamodificacion` DATETIME)  BEGIN
   UPDATE `pm_mod_rep` SET
-    `MOD_id` = `par_MOD_id`,
-    `REP_id` = `par_REP_id`
+    `MOD_id` = idModelocam,
+    `REP_id` = idReferenciacam,
+    `MOD_REP_fechamodificacion` = fechamodificacion
   WHERE 
-    (`MOD_id` = `p_MOD_id`) AND
-    (`REP_id` = `p_REP_id`);
+    (`MOD_id` = idModeloorg) AND
+    (`REP_id` = idRepuestoorg);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PROTOCOLO_del` (IN `id` INT)  NO SQL
@@ -432,10 +444,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_del` (IN `id` INT)  BEG
     (`REP_id` = id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_ins` (IN `nombre` VARCHAR(45), IN `descripcion` LONGTEXT, IN `foto` VARCHAR(100), IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_ins` (IN `nombre` VARCHAR(45), IN `referencia` VARCHAR(50), IN `descripcion` LONGTEXT, IN `foto` VARCHAR(100), IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  BEGIN
   INSERT INTO `pm_repuesto`
   (
     `REP_nombre`,
+    `REP_referencia`,
     `REP_descripcion`,
     `REP_foto`,
     `REP_fechacreacion`,
@@ -445,6 +458,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_ins` (IN `nombre` VARCH
   VALUES 
   (
     nombre,
+    referencia,
     descripcion,
     foto,
     fechacreacion,
@@ -457,15 +471,34 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_sel` ()  BEGIN
   SELECT
     `REP_id` as id,
     `REP_nombre` as nombre,
+    `REP_referencia` as referencia,
     `REP_descripcion` as descripcion,
     `REP_foto` as foto
   FROM `pm_repuesto`
   ORDER BY `REP_nombre` asc;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_upd` (IN `nombre` VARCHAR(45), IN `descripcion` LONGTEXT, IN `foto` VARCHAR(100), IN `fechamodificacion` DATETIME, IN `id` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_selxmodelo` (IN `id` INT)  NO SQL
+BEGIN
+  SELECT
+    re.`REP_id` as id,
+    re.`REP_nombre` as nombre,
+    re.`REP_referencia` as referencia,
+    re.`REP_descripcion` as descripcion,
+    re.`REP_foto` as foto,
+    mr.`MOD_id` as idModelo,
+    mr.`REP_id` as idRepuesto
+  FROM `pm_mod_rep` as mr
+  INNER JOIN `pm_repuesto` as re
+  ON mr.`REP_id`=re.`REP_id`
+  WHERE mr.`MOD_REP_estado` = 1
+  AND mr.`REP_id` = id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_upd` (IN `nombre` VARCHAR(45), IN `referencia` VARCHAR(50), IN `descripcion` LONGTEXT, IN `foto` VARCHAR(100), IN `fechamodificacion` DATETIME, IN `id` INT)  BEGIN
   UPDATE `pm_repuesto` SET
     `REP_nombre` = nombre,
+    `REP_referencia` = referencia,
     `REP_descripcion` = descripcion,
     `REP_foto` = foto,
     `REP_fechamodificacion` = fechamodificacion,
@@ -654,7 +687,8 @@ INSERT INTO `pm_manual` (`MAN_id`, `MAN_nombre`, `MAN_ubicacion`, `MAN_url`, `MO
 (6, 'Hoja datos técnicos', '', 'manual-1507841426-ATL HDI 5000 Data Sheet.pdf', 3, '2017-10-12 22:50:28', '2017-10-12 22:50:28', 1),
 (7, 'Manual Usuario', '', 'manual-1507841456-Manual usuario HDI500.pdf', 3, '2017-10-12 22:50:58', '2017-10-12 22:50:58', 1),
 (8, 'Uso de desinfectantes y gel', '', 'manual-1507841585-HDI5000 Uso de desinfectantes y gel.pdf', 3, '2017-10-12 22:53:08', '2017-10-12 22:53:08', 1),
-(9, 'Comandos VX Works', '', 'manual-1507841612-HDI5000 VXWorks Commands.pdf', 3, '2017-10-12 22:53:34', '2017-10-12 22:53:34', 1);
+(9, 'Comandos VX Works', '', 'manual-1507841612-HDI5000 VXWorks Commands.pdf', 3, '2017-10-12 22:53:34', '2017-10-12 22:53:34', 1),
+(10, 'Manual Servicio', '', 'manual-1507918898-BV Endura Service Manual.pdf', 6, '2017-10-13 20:21:40', '2017-10-13 20:21:40', 1);
 
 -- --------------------------------------------------------
 
@@ -761,7 +795,8 @@ INSERT INTO `pm_modelo` (`MOD_id`, `MOD_nombre`, `TIP_id`, `MAR_id`, `MOD_foto`,
 (2, 'Cardiocap 5', 1, 2, 'image-1507576435-cardiocap5.jpg', '2017-10-09 16:13:56', '2017-10-09 23:48:45', 1),
 (3, 'HDI5000', 3, 5, 'image-1507841124-hdi_5000_lg.jpg', '2017-10-09 20:43:54', '2017-10-12 22:45:26', 1),
 (4, 'B650', 1, 2, 'image-1507593266-b650.jpg', '2017-10-09 20:46:54', '2017-10-09 23:48:38', 1),
-(5, 'M-Series', 5, 16, 'image-1507643996-zollm.jpg', '2017-10-10 15:59:00', '2017-10-10 15:59:59', 1);
+(5, 'M-Series', 5, 16, 'image-1507643996-zollm.jpg', '2017-10-10 15:59:00', '2017-10-10 15:59:59', 1),
+(6, 'Endura BV', 9, 5, 'image-1507924868-70721-104851.jpg', '2017-10-13 20:21:03', '2017-10-13 22:01:10', 1);
 
 -- --------------------------------------------------------
 
@@ -771,7 +806,10 @@ INSERT INTO `pm_modelo` (`MOD_id`, `MOD_nombre`, `TIP_id`, `MAR_id`, `MOD_foto`,
 
 CREATE TABLE `pm_mod_rep` (
   `MOD_id` int(11) NOT NULL,
-  `REP_id` int(11) NOT NULL
+  `REP_id` int(11) NOT NULL,
+  `MOD_REP_fechacreacion` datetime NOT NULL,
+  `MOD_REP_fechamodificacion` datetime NOT NULL,
+  `MOD_REP_estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -796,7 +834,8 @@ CREATE TABLE `pm_protocolo` (
 
 INSERT INTO `pm_protocolo` (`PRO_id`, `PRO_nombre`, `PRO_url`, `MOD_id`, `PRO_fechacreacion`, `PRO_fechamodificacion`, `PRO_estado`) VALUES
 (1, 'Protocolo Acreditación', 'manual-1507736908-Protocolo Interno Monitor.xlsx', 2, '2017-10-11 17:48:31', '2017-10-11 17:52:51', 1),
-(2, 'Protocolo Mantenimiento', 'manual-1507747411-Monitor Multiparametro.doc', 2, '2017-10-11 20:43:33', '2017-10-11 20:43:33', 1);
+(2, 'Protocolo Mantenimiento', 'manual-1507747411-Monitor Multiparametro.doc', 2, '2017-10-11 20:43:33', '2017-10-11 20:43:33', 1),
+(3, 'Protocolo Mantenimiento', 'protocolo-1507919028-PROTOCOLO DE MANTENIMIENTO_ARCO_C (1).docx', 6, '2017-10-13 20:23:16', '2017-10-13 20:23:51', 1);
 
 -- --------------------------------------------------------
 
@@ -807,12 +846,20 @@ INSERT INTO `pm_protocolo` (`PRO_id`, `PRO_nombre`, `PRO_url`, `MOD_id`, `PRO_fe
 CREATE TABLE `pm_repuesto` (
   `REP_id` int(11) NOT NULL,
   `REP_nombre` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `REP_referencia` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
   `REP_descripcion` longtext COLLATE utf8_spanish_ci,
   `REP_foto` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   `REP_fechacreacion` datetime DEFAULT NULL,
   `REP_fechamodificacion` datetime DEFAULT NULL,
   `REP_estado` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `pm_repuesto`
+--
+
+INSERT INTO `pm_repuesto` (`REP_id`, `REP_nombre`, `REP_referencia`, `REP_descripcion`, `REP_foto`, `REP_fechacreacion`, `REP_fechamodificacion`, `REP_estado`) VALUES
+(1, 'Sensor oxígeno ', '6850645', 'Marca: Drager, para máquinas de anestesia Drager', 'repuesto-1507906622-MT-423-2002.jpg', '2017-10-13 16:54:46', '2017-10-13 18:07:51', 1);
 
 -- --------------------------------------------------------
 
@@ -840,7 +887,8 @@ INSERT INTO `pm_tipoequipo` (`TIP_id`, `TIP_nombre`, `TIP_fechacreacion`, `TIP_f
 (5, 'Desfibrilador', '2017-10-09 23:37:08', '2017-10-09 23:37:08', 1),
 (6, 'Refrigerador', '2017-10-09 23:37:14', '2017-10-09 23:37:14', 1),
 (7, 'Máquina Anestesia', '2017-10-09 23:37:31', '2017-10-09 23:37:31', 1),
-(8, 'Microscopio', '2017-10-12 18:29:06', '2017-10-12 18:29:21', 1);
+(8, 'Microscopio', '2017-10-12 18:29:06', '2017-10-12 18:29:21', 1),
+(9, 'RX Portátil', '2017-10-13 20:20:27', '2017-10-13 20:20:27', 1);
 
 -- --------------------------------------------------------
 
@@ -865,7 +913,7 @@ CREATE TABLE `pm_torpedo` (
 
 INSERT INTO `pm_torpedo` (`TOR_id`, `TOR_titulo`, `TOR_descripcion`, `TOR_url`, `MOD_id`, `TOR_fechacreacion`, `TOR_fechamodificacion`, `TOR_estado`) VALUES
 (1, 'Clave Instalación/Servicio', 'Instalación (16-4-34), Servicio (26-23-8).', '', 2, '2017-10-12 16:57:56', '2017-10-12 17:04:13', 1),
-(2, 'Método solucionar error 008', 'abcdefg', 'torpedo-1507867088-Carta2013 (1).xls', 3, '2017-10-13 00:58:09', '2017-10-13 00:58:09', 1);
+(2, 'Método solucionar error 008', 'abcdefg', 'apuntes-1507896374-Error 0008.txt', 3, '2017-10-13 00:58:09', '2017-10-13 14:06:17', 1);
 
 --
 -- Índices para tablas volcadas
@@ -938,41 +986,49 @@ ALTER TABLE `pm_torpedo`
 --
 ALTER TABLE `pm_empleado`
   MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_manual`
 --
 ALTER TABLE `pm_manual`
-  MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_marca`
 --
 ALTER TABLE `pm_marca`
   MODIFY `MAR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_modelo`
 --
 ALTER TABLE `pm_modelo`
-  MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_protocolo`
 --
 ALTER TABLE `pm_protocolo`
-  MODIFY `PRO_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `PRO_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_repuesto`
 --
 ALTER TABLE `pm_repuesto`
-  MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_tipoequipo`
 --
 ALTER TABLE `pm_tipoequipo`
-  MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_torpedo`
 --
 ALTER TABLE `pm_torpedo`
   MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- Restricciones para tablas volcadas
 --
@@ -995,6 +1051,7 @@ ALTER TABLE `pm_mod_rep`
 --
 ALTER TABLE `pm_torpedo`
   ADD CONSTRAINT `fk_PM_TORpedo_PM_MODelo1` FOREIGN KEY (`MOD_id`) REFERENCES `pm_modelo` (`MOD_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

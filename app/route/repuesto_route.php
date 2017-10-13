@@ -39,6 +39,18 @@ $app->group('/v1', function () use ($app){
                 )
             );
         });
+        $this->get('getxmod/{id}', function ($req, $res, $args) {
+          $um = new RepuestoModel();
+          
+          return $res
+             ->withHeader('Content-type', 'application/json')
+             ->getBody()
+             ->write(
+              json_encode(
+                  $um->GetxMod($args['id'])
+              )
+          );
+      });
         
         $this->post('save', function ($req, $res) {
             $um = new RepuestoModel();
