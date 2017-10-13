@@ -68,20 +68,20 @@ $app->group('/v1', function () use ($app){
           );
       });
 
-      // $this->post('upload-file', function ($req, $res) {
-      //     $um = new TorpedoModel();
+      $this->post('upload-file', function ($req, $res) {
+          $um = new TorpedoModel();
           
-      //     return $res
-      //        ->withHeader('Content-type', 'application/json')
-      //        ->getBody()
-      //        ->write(
-      //         json_encode(
-      //             $um->uploadFile(
-      //                 $req->getParsedBody()
-      //             )
-      //         )
-      //     );
-      // });
+          return $res
+             ->withHeader('Content-type', 'application/json')
+             ->getBody()
+             ->write(
+              json_encode(
+                  $um->uploadFile(
+                      $req->getParsedBody()
+                  )
+              )
+          );
+      });
       
       $this->post('delete/{id}', function ($req, $res, $args) {
           $um = new TorpedoModel();
