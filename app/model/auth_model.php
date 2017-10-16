@@ -17,28 +17,29 @@ class AuthModel
         $this->response = new Response();
     }
     
-    public function Autenticar($nombre,$pass)
+    public function Autenticar($email,$pass)
     {
 	   
         try
         {
             $result = array();
             $contra = sha1('pmti'.$pass);
-            $stm = $this->db->prepare("CALL SP_AUTH_Sel(:nombre,:pass)");
-            $stm->bindParam(':nombre', $nombre);
+            $stm = $this->db->prepare("CALL SP_AUTH_Sel(:email,:pass)");
+            $stm->bindParam(':email', $email);
             $stm->bindParam(':pass', $contra);
             $stm->execute();
 
             $empleado = $stm->fetch();
 
             if(is_object($empleado)){
+                
                 $token = Auth::SignIn([
-                    'id' => $empleado->EMP_id,
-                    'nombre' => $empleado->EMP_Nombre,
-                    'apellido' => $empleado->EMP_Apellido,
-                    'email' => $empleado->EMP_Email,
-                    'acceso' => $empleado->PAR_Acceso
-
+                    'id' => $empleado->id,
+                    'nombre' => $empleado->nombre,
+                    'apellido' => $empleado->apellido,
+                    'email' => $empleado->email,
+                    'acceso' => $empleado->acceso,
+                    'user' => $empleado->usuario
                     ]);
             $this->response->result = $token;
             return $this->response->setResponse(true);

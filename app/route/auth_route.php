@@ -12,7 +12,7 @@ $app->group('/v1', function () use ($app){
 
             return $res->withHeader('Content-type', 'application/json')
                        ->write(
-                          json_encode($um->Autenticar($parametros['nombre'],$parametros['pass']))
+                          json_encode($um->Autenticar($parametros['email'],$parametros['pass']))
                         );
         });
         

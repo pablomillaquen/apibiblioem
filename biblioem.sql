@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost:3306
--- Tiempo de generación: 16-10-2017 a las 00:11:52
--- Versión del servidor: 5.7.19-0ubuntu0.17.04.1
--- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 16-10-2017 a las 22:52:07
+-- Versión del servidor: 10.1.19-MariaDB
+-- Versión de PHP: 5.6.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -24,21 +26,17 @@ DELIMITER $$
 --
 -- Procedimientos
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_AUTH_Sel` (IN `nombre` VARCHAR(45), IN `pass` VARCHAR(200))  NO SQL
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_AUTH_Sel` (IN `email` VARCHAR(60), IN `pass` VARCHAR(200))  NO SQL
 BEGIN
   SELECT
-    `EMP_id`,
-    `EMP_nombre`,
-    `EMP_apelllido`,
-    `EMP_email`,
-    `EMP_acceso`,
-    `EMP_user`,
-    `EMP_pass`,
-    `EMP_fechacreacion`,
-    `EMP_fechamodificacion`,
-    `EMP_estado`
+    `EMP_id` as id,
+    `EMP_nombre` as nombre,
+    `EMP_apellido` as apellido,
+    `EMP_email` as email,
+    `EMP_acceso` as acceso,
+    `EMP_user`as usuario
   FROM `pm_empleado`
-  WHERE `EMP_user` = nombre
+  WHERE `EMP_email` = email
   AND `EMP_pass`= pass;
 END$$
 
@@ -645,7 +643,7 @@ DELIMITER ;
 CREATE TABLE `pm_empleado` (
   `EMP_id` int(11) NOT NULL,
   `EMP_nombre` varchar(30) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `EMP_apelllido` varchar(30) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `EMP_apellido` varchar(30) COLLATE utf8_spanish_ci DEFAULT NULL,
   `EMP_email` varchar(60) COLLATE utf8_spanish_ci DEFAULT NULL,
   `EMP_acceso` int(11) DEFAULT NULL,
   `EMP_user` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
@@ -654,6 +652,13 @@ CREATE TABLE `pm_empleado` (
   `EMP_fechamodificacion` datetime DEFAULT NULL,
   `EMP_estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `pm_empleado`
+--
+
+INSERT INTO `pm_empleado` (`EMP_id`, `EMP_nombre`, `EMP_apellido`, `EMP_email`, `EMP_acceso`, `EMP_user`, `EMP_pass`, `EMP_fechacreacion`, `EMP_fechamodificacion`, `EMP_estado`) VALUES
+(1, 'pablo', 'millaquen', 'pablo@pablo.cl', 1, 'pablo', '02293f42fd94989f555b30e02c22fd3b1a2809e6', '2017-10-16 00:00:00', '2017-10-16 00:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -864,7 +869,7 @@ CREATE TABLE `pm_repuesto` (
 --
 
 INSERT INTO `pm_repuesto` (`REP_id`, `REP_nombre`, `REP_referencia`, `REP_descripcion`, `REP_foto`, `REP_fechacreacion`, `REP_fechamodificacion`, `REP_estado`) VALUES
-(1, 'Sensor oxígeno - Drager', '6850645', 'Sensor oxígeno, para máquina de anestesia', 'repuesto-1508107283-59cd08_sensor-oxigeno-6850645.jpg', '2017-10-13 16:54:46', '2017-10-15 19:41:23', 1);
+(1, 'Sensor oxígeno - Drager', '6850645', 'Sensor oxígeno, para máquina de anestesia', 'repuesto-1508154948-MT-423-2002.jpg', '2017-10-13 16:54:46', '2017-10-16 13:55:50', 1);
 
 -- --------------------------------------------------------
 
@@ -990,42 +995,50 @@ ALTER TABLE `pm_torpedo`
 -- AUTO_INCREMENT de la tabla `pm_empleado`
 --
 ALTER TABLE `pm_empleado`
-  MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_manual`
 --
 ALTER TABLE `pm_manual`
   MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_marca`
 --
 ALTER TABLE `pm_marca`
   MODIFY `MAR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_modelo`
 --
 ALTER TABLE `pm_modelo`
   MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_protocolo`
 --
 ALTER TABLE `pm_protocolo`
   MODIFY `PRO_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_repuesto`
 --
 ALTER TABLE `pm_repuesto`
   MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_tipoequipo`
 --
 ALTER TABLE `pm_tipoequipo`
   MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_torpedo`
 --
 ALTER TABLE `pm_torpedo`
   MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- Restricciones para tablas volcadas
 --
@@ -1048,6 +1061,7 @@ ALTER TABLE `pm_mod_rep`
 --
 ALTER TABLE `pm_torpedo`
   ADD CONSTRAINT `fk_PM_TORpedo_PM_MODelo1` FOREIGN KEY (`MOD_id`) REFERENCES `pm_modelo` (`MOD_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
