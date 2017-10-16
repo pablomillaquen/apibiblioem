@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.6.6deb4
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 13-10-2017 a las 22:53:45
--- Versión del servidor: 10.1.19-MariaDB
--- Versión de PHP: 5.6.28
+-- Servidor: localhost:3306
+-- Tiempo de generación: 16-10-2017 a las 00:11:52
+-- Versión del servidor: 5.7.19-0ubuntu0.17.04.1
+-- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -812,6 +810,13 @@ CREATE TABLE `pm_mod_rep` (
   `MOD_REP_estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+--
+-- Volcado de datos para la tabla `pm_mod_rep`
+--
+
+INSERT INTO `pm_mod_rep` (`MOD_id`, `REP_id`, `MOD_REP_fechacreacion`, `MOD_REP_fechamodificacion`, `MOD_REP_estado`) VALUES
+(1, 1, '2017-10-15 22:49:21', '2017-10-15 22:49:21', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -859,7 +864,7 @@ CREATE TABLE `pm_repuesto` (
 --
 
 INSERT INTO `pm_repuesto` (`REP_id`, `REP_nombre`, `REP_referencia`, `REP_descripcion`, `REP_foto`, `REP_fechacreacion`, `REP_fechamodificacion`, `REP_estado`) VALUES
-(1, 'Sensor oxígeno ', '6850645', 'Marca: Drager, para máquinas de anestesia Drager', 'repuesto-1507906622-MT-423-2002.jpg', '2017-10-13 16:54:46', '2017-10-13 18:07:51', 1);
+(1, 'Sensor oxígeno - Drager', '6850645', 'Sensor oxígeno, para máquina de anestesia', 'repuesto-1508107283-59cd08_sensor-oxigeno-6850645.jpg', '2017-10-13 16:54:46', '2017-10-15 19:41:23', 1);
 
 -- --------------------------------------------------------
 
@@ -986,49 +991,41 @@ ALTER TABLE `pm_torpedo`
 --
 ALTER TABLE `pm_empleado`
   MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_manual`
 --
 ALTER TABLE `pm_manual`
   MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_marca`
 --
 ALTER TABLE `pm_marca`
   MODIFY `MAR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_modelo`
 --
 ALTER TABLE `pm_modelo`
   MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_protocolo`
 --
 ALTER TABLE `pm_protocolo`
   MODIFY `PRO_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_repuesto`
 --
 ALTER TABLE `pm_repuesto`
   MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_tipoequipo`
 --
 ALTER TABLE `pm_tipoequipo`
   MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
 --
 -- AUTO_INCREMENT de la tabla `pm_torpedo`
 --
 ALTER TABLE `pm_torpedo`
   MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- Restricciones para tablas volcadas
 --
@@ -1051,7 +1048,6 @@ ALTER TABLE `pm_mod_rep`
 --
 ALTER TABLE `pm_torpedo`
   ADD CONSTRAINT `fk_PM_TORpedo_PM_MODelo1` FOREIGN KEY (`MOD_id`) REFERENCES `pm_modelo` (`MOD_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

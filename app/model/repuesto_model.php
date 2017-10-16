@@ -121,6 +121,29 @@ class RepuestoModel
             $this->response->setResponse(false, $e->getMessage());
 		}
     }
+
+    public function InsertOrUpdatexmod($data)
+    {
+        try 
+        {
+            
+                $stm = $this->db->prepare("CALL SP_MOD_REP_ins(:idModelo,:idRepuesto,:fechacreacion,:fechamodificacion)");
+                $date = date('Y-m-d H:i:s');
+                $stm->bindParam(':idModelo', $data['id']);
+                $stm->bindParam(':idRepuesto', $data['idRepuesto']);
+                $stm->bindParam(':fechacreacion', $date);
+                $stm->bindParam(':fechamodificacion', $date);
+                $stm->execute();
+               
+            
+            
+            $this->response->setResponse(true);
+            return $this->response;
+        }catch (Exception $e) 
+        {
+            $this->response->setResponse(false, $e->getMessage());
+        }
+    }
     
     public function Delete($id)
     {
@@ -137,6 +160,24 @@ class RepuestoModel
 			$this->response->setResponse(false, $e->getMessage());
 		}
     }
+
+    public function Deletexmod($id, $idRepuesto)
+    {
+        try 
+        {
+            $stm = $this->db->prepare("CALL SP_MOD_REP_del(:idModelo,:idRepuesto)");
+            $stm->bindParam(':idModelo', $id);
+            $stm->bindParam(':idRepuesto', $idRepuesto);
+            $stm->execute();
+            
+            $this->response->setResponse(true);
+            return $this->response;
+        } catch (Exception $e) 
+        {
+            $this->response->setResponse(false, $e->getMessage());
+        }
+    }
+
 
     public function uploadFile()
     {

@@ -67,6 +67,21 @@ $app->group('/v1', function () use ($app){
             );
         });
 
+        $this->post('savexmod', function ($req, $res) {
+            $um = new RepuestoModel();
+            
+            return $res
+               ->withHeader('Content-type', 'application/json')
+               ->getBody()
+               ->write(
+                json_encode(
+                    $um->InsertOrUpdatexmod(
+                        $req->getParsedBody()
+                    )
+                )
+            );
+        });
+
         $this->post('upload-file', function ($req, $res) {
           $um = new RepuestoModel();
           
@@ -91,6 +106,19 @@ $app->group('/v1', function () use ($app){
                ->write(
                 json_encode(
                     $um->Delete($args['id'])
+                )
+            );
+        });
+
+        $this->post('deletexmod/{id}/{idRepuesto}', function ($req, $res, $args) {
+            $um = new RepuestoModel();
+            
+            return $res
+               ->withHeader('Content-type', 'application/json')
+               ->getBody()
+               ->write(
+                json_encode(
+                    $um->Deletexmod($args['id'],$args['idRepuesto'])
                 )
             );
         });
