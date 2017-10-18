@@ -19,19 +19,5 @@ $app->group('/v1', function () use ($app){
     });
   });
   
-  $app->group('/user', function () use ($app){
-    $app->group('/auth/', function () use ($app){
-        
-        $this->post('autenticar', function ($req, $res, $args) {
-          $um = new AuthClienteModel();
-          $parametros = $req->getParsedBody();
-
-            return $res->withHeader('Content-type', 'application/json')
-                       ->write(
-                          json_encode($um->AutenticarCliente())
-                        );
-        });
-        
-    });
-  });
+  
 });

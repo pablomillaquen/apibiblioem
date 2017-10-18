@@ -14,7 +14,7 @@ return [
             'path' => __DIR__ . '/../logs/app.log',
         ],
         
-        'app_token_name'   => 'APPTOKEN',
+        'app_token_name'   => 'Authorization',
         'app_token_name_client'   => 'Authorization'
     ],
 ];

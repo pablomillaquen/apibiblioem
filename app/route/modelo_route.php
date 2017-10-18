@@ -55,20 +55,7 @@ $app->group('/v1', function () use ($app){
           );
       });
 
-      $this->post('upload-file', function ($req, $res) {
-          $um = new ModeloModel();
-          
-          return $res
-             ->withHeader('Content-type', 'application/json')
-             ->getBody()
-             ->write(
-              json_encode(
-                  $um->uploadFile(
-                      $req->getParsedBody()
-                  )
-              )
-          );
-      });
+      
       
       $this->post('delete/{id}', function ($req, $res, $args) {
           $um = new ModeloModel();
@@ -84,17 +71,14 @@ $app->group('/v1', function () use ($app){
       });
       
     });
-  });//->add(new AuthMiddleware($app));
+  })->add(new AuthMiddleware($app));
   
   $app->group('/user', function () use ($app){
     $app->group('/modelo/', function () use ($app){
       
-      $this->get('test', function ($req, $res, $args) {
-          return $res->getBody()
-                     ->write('Hello desde employee');
-      });
+     
       
-      $this->get('getAll/{l}/{p}', function ($req, $res, $args) {
+      $this->get('getAll/', function ($req, $res, $args) {
           $um = new ModeloModel();
           
           return $res
@@ -102,7 +86,7 @@ $app->group('/v1', function () use ($app){
              ->getBody()
              ->write(
               json_encode(
-                  $um->GetAll($args['l'],$args['p'])
+                  $um->GetAll()
               )
           );
       });
@@ -119,8 +103,8 @@ $app->group('/v1', function () use ($app){
               )
           );
       });
-      
-      $this->post('save', function ($req, $res) {
+
+      $this->post('upload-file', function ($req, $res) {
           $um = new ModeloModel();
           
           return $res
@@ -128,26 +112,13 @@ $app->group('/v1', function () use ($app){
              ->getBody()
              ->write(
               json_encode(
-                  $um->InsertOrUpdate(
+                  $um->uploadFile(
                       $req->getParsedBody()
                   )
               )
           );
       });
       
-      $this->post('delete/{id}', function ($req, $res, $args) {
-          $um = new ModeloModel();
-          
-          return $res
-             ->withHeader('Content-type', 'application/json')
-             ->getBody()
-             ->write(
-              json_encode(
-                  $um->Delete($args['id'])
-              )
-          );
-      });
-      
     });
-  })->add(new AuthClienteMiddleware($app));
+  });
 });
