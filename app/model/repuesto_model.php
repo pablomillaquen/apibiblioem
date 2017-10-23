@@ -69,7 +69,7 @@ class RepuestoModel
         {
             $result = array();
 
-            $stm = $this->db->prepare("CALL SP_REPUESTO_selxmodelo(:id)");
+            $stm = $this->db->prepare("CALL SP_MOD_REP_selxmodelo(:id)");
             $stm->bindParam(':id', $id);
             $stm->execute();
 
