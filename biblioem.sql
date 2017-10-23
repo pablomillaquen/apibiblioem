@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 17-10-2017 a las 10:24:42
+-- Tiempo de generación: 23-10-2017 a las 09:03:07
 -- Versión del servidor: 5.7.19-0ubuntu0.17.04.1
 -- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
 
@@ -45,11 +45,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_del` (IN `id` INT)  BEG
     (`EMP_id` = id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_ins` (IN `nombre` VARCHAR(30), IN `apellido` VARCHAR(30), IN `email` VARCHAR(60), IN `acceso` INT, IN `usuario` VARCHAR(45), IN `pass` VARCHAR(200), IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME, IN `estado` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_ins` (IN `nombre` VARCHAR(30), IN `apellido` VARCHAR(30), IN `email` VARCHAR(60), IN `acceso` INT, IN `usuario` VARCHAR(45), IN `pass` VARCHAR(200), IN `fechacreacion` DATETIME, IN `fechamodificacion` DATETIME)  BEGIN
   INSERT INTO `pm_empleado`
   (
     `EMP_nombre`,
-    `EMP_apelllido`,
+    `EMP_apellido`,
     `EMP_email`,
     `EMP_acceso`,
     `EMP_user`,
@@ -72,36 +72,43 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_ins` (IN `nombre` VARCH
   );
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_sel` (IN `l` INT, IN `p` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_sel` ()  BEGIN
   SELECT
-    `EMP_id`,
-    `EMP_nombre`,
-    `EMP_apelllido`,
-    `EMP_email`,
-    `EMP_acceso`,
-    `EMP_user`,
-    `EMP_pass`,
-    `EMP_fechacreacion`,
-    `EMP_fechamodificacion`,
-    `EMP_estado`
+    `EMP_id`as id,
+    `EMP_nombre` as nombre,
+    `EMP_apellido` as apellido,
+    `EMP_email` as correo,
+    `EMP_acceso` as acceso,
+    `EMP_user`as usuario
   FROM `pm_empleado`
-  LIMIT l
-  OFFSET p;
+  WHERE `EMP_estado` = 1;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_upd` (IN `p_EMP_id` INT, IN `p_EMP_nombre` VARCHAR(30), IN `p_EMP_apelllido` VARCHAR(30), IN `p_EMP_email` VARCHAR(60), IN `p_EMP_acceso` INT, IN `p_EMP_user` VARCHAR(45), IN `p_EMP_pass` VARCHAR(200), IN `p_EMP_fechacreacion` DATETIME, IN `p_EMP_fechamodificacion` DATETIME, IN `p_EMP_estado` INT)  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_upd` (IN `nombre` VARCHAR(30), IN `apellido` VARCHAR(30), IN `email` VARCHAR(60), IN `acceso` INT, IN `usuario` VARCHAR(45), IN `pass` VARCHAR(200), IN `fechamodificacion` DATETIME, IN `id` INT)  BEGIN
   UPDATE `pm_empleado` SET
-    `EMP_nombre` = `p_EMP_nombre`,
-    `EMP_apelllido` = `p_EMP_apelllido`,
-    `EMP_email` = `p_EMP_email`,
-    `EMP_acceso` = `p_EMP_acceso`,
-    `EMP_user` = `p_EMP_user`,
-    `EMP_pass` = `p_EMP_pass`,
-    `EMP_fechacreacion` = `p_EMP_fechacreacion`,
-    `EMP_fechamodificacion` = `p_EMP_fechamodificacion`,
-    `EMP_estado` = `p_EMP_estado`
+    `EMP_nombre` = nombre,
+    `EMP_apellido` = apellido,
+    `EMP_email` = email,
+    `EMP_acceso` = acceso,
+    `EMP_user` = usuario,
+    `EMP_pass` = pass,
+    `EMP_fechamodificacion` = fechamodificacion,
+    `EMP_estado` = 1
   WHERE 
-    (`EMP_id` = `p_EMP_id`);
+    (`EMP_id` = id);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EMPLEADO_UpdSP` (IN `nombre` VARCHAR(30), IN `apellido` VARCHAR(30), IN `email` VARCHAR(60), IN `acceso` INT, IN `usuario` VARCHAR(45), IN `fechamodificacion` DATETIME, IN `id` INT)  NO SQL
+BEGIN
+  UPDATE `pm_empleado` SET
+    `EMP_nombre` = nombre,
+    `EMP_apellido` = apellido,
+    `EMP_email` = email,
+    `EMP_acceso` = acceso,
+    `EMP_user` = usuario,
+    `EMP_fechamodificacion` = fechamodificacion,
+    `EMP_estado` = 1
+  WHERE `EMP_id` = id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MANUAL_del` (IN `id` INT)  BEGIN
@@ -656,7 +663,9 @@ CREATE TABLE `pm_empleado` (
 --
 
 INSERT INTO `pm_empleado` (`EMP_id`, `EMP_nombre`, `EMP_apellido`, `EMP_email`, `EMP_acceso`, `EMP_user`, `EMP_pass`, `EMP_fechacreacion`, `EMP_fechamodificacion`, `EMP_estado`) VALUES
-(1, 'pablo', 'millaquen', 'pablo@pablo.cl', 1, 'pablo', '02293f42fd94989f555b30e02c22fd3b1a2809e6', '2017-10-16 00:00:00', '2017-10-16 00:00:00', 1);
+(1, 'pablo', 'millaquén', 'pablo@pablo.cl', 1, 'pablo', '02293f42fd94989f555b30e02c22fd3b1a2809e6', '2017-10-16 00:00:00', '2017-10-20 16:51:24', 1),
+(2, 'Roberto', 'García', 'roberto@biomedica.cl', 0, 'roberto', 'b02e2275ba3df935a2a711b0297e74db8c4d56a4', '2017-10-20 16:52:27', '2017-10-20 16:52:44', 1),
+(3, 'Yanko', 'Jaramillo', 'janko@ruso.cl', 0, 'janko', '8175a6556ca7aedc632c32cb6d4555d508893fbf', '2017-10-20 16:54:04', '2017-10-20 16:54:04', 1);
 
 -- --------------------------------------------------------
 
@@ -689,7 +698,9 @@ INSERT INTO `pm_manual` (`MAN_id`, `MAN_nombre`, `MAN_ubicacion`, `MAN_url`, `MO
 (7, 'Manual Usuario', '', 'manual-1507841456-Manual usuario HDI500.pdf', 3, '2017-10-12 22:50:58', '2017-10-12 22:50:58', 1),
 (8, 'Uso de desinfectantes y gel', '', 'manual-1507841585-HDI5000 Uso de desinfectantes y gel.pdf', 3, '2017-10-12 22:53:08', '2017-10-12 22:53:08', 1),
 (9, 'Comandos VX Works', '', 'manual-1507841612-HDI5000 VXWorks Commands.pdf', 3, '2017-10-12 22:53:34', '2017-10-12 22:53:34', 1),
-(10, 'Manual Servicio', '', 'manual-1507918898-BV Endura Service Manual.pdf', 6, '2017-10-13 20:21:40', '2017-10-13 20:21:40', 1);
+(10, 'Manual Servicio', '', 'manual-1507918898-BV Endura Service Manual.pdf', 6, '2017-10-13 20:21:40', '2017-10-13 20:21:40', 1),
+(11, 'Manual Servicio Avanzado', '', 'manual-1508557232-LOGIQ_9_Proprietary_Manual.pdf', 7, '2017-10-21 00:20:26', '2017-10-21 00:40:32', 1),
+(12, 'Nuevo manual', '', NULL, 7, '2017-10-21 00:28:26', '2017-10-21 00:32:04', 1);
 
 -- --------------------------------------------------------
 
@@ -797,7 +808,8 @@ INSERT INTO `pm_modelo` (`MOD_id`, `MOD_nombre`, `TIP_id`, `MAR_id`, `MOD_foto`,
 (3, 'HDI5000', 3, 5, 'image-1507841124-hdi_5000_lg.jpg', '2017-10-09 20:43:54', '2017-10-12 22:45:26', 1),
 (4, 'B650', 1, 2, 'image-1507593266-b650.jpg', '2017-10-09 20:46:54', '2017-10-09 23:48:38', 1),
 (5, 'M-Series', 5, 16, 'image-1507643996-zollm.jpg', '2017-10-10 15:59:00', '2017-10-10 15:59:59', 1),
-(6, 'Endura BV', 9, 5, 'image-1507924868-70721-104851.jpg', '2017-10-13 20:21:03', '2017-10-13 22:01:10', 1);
+(6, 'Endura BV', 9, 5, 'image-1507924868-70721-104851.jpg', '2017-10-13 20:21:03', '2017-10-13 22:01:10', 1),
+(7, 'Logic9', 3, 2, 'image-1508555363-logic9-thumb.jpg', '2017-10-21 00:09:23', '2017-10-21 00:09:23', 1);
 
 -- --------------------------------------------------------
 
@@ -993,12 +1005,12 @@ ALTER TABLE `pm_torpedo`
 -- AUTO_INCREMENT de la tabla `pm_empleado`
 --
 ALTER TABLE `pm_empleado`
-  MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `pm_manual`
 --
 ALTER TABLE `pm_manual`
-  MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT de la tabla `pm_marca`
 --
@@ -1008,7 +1020,7 @@ ALTER TABLE `pm_marca`
 -- AUTO_INCREMENT de la tabla `pm_modelo`
 --
 ALTER TABLE `pm_modelo`
-  MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `pm_protocolo`
 --
