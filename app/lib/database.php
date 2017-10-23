@@ -3,6 +3,9 @@ namespace App\Lib;
 
 use PDO;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class Database
 {
     public static function StartUp()

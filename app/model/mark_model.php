@@ -4,6 +4,9 @@ namespace App\Model;
 use App\Lib\Database;
 use App\Lib\Response;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class MarkModel
 {
     private $db;

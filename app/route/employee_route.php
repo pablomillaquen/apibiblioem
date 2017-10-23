@@ -14,7 +14,7 @@ $app->group('/v1', function () use ($app){
                        ->write('Hello desde employee');
         });
         
-        $this->get('getAll/{l}/{p}', function ($req, $res, $args) {
+        $this->get('getAll/', function ($req, $res, $args) {
             $um = new EmployeeModel();
             
             return $res
@@ -22,7 +22,7 @@ $app->group('/v1', function () use ($app){
                ->getBody()
                ->write(
                 json_encode(
-                    $um->GetAll($args['l'],$args['p'])
+                    $um->GetAll()
                 )
             );
         });
@@ -55,7 +55,7 @@ $app->group('/v1', function () use ($app){
             );
         });
         
-        $this->delete('delete/{id}', function ($req, $res, $args) {
+        $this->post('delete/{id}', function ($req, $res, $args) {
             $um = new EmployeeModel();
             
             return $res

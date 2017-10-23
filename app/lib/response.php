@@ -1,6 +1,9 @@
 <?php
 namespace App\Lib;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class Response
 {
 	public $result     = null;

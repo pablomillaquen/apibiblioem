@@ -5,6 +5,9 @@ use App\Lib\Database;
 use App\Lib\Response;
 use PiramideUploader;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class RepuestoModel
 {
     private $db;

@@ -4,6 +4,9 @@ namespace App\Middleware;
 use Exception,
     App\Lib\Auth;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class AuthMiddleware
 {
     private $app = null;

@@ -4,6 +4,9 @@ namespace App\Lib;
 use Firebase\JWT\JWT,
     Exception;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class Auth
 {
     private static $secret_key = '294a937374a8e85c2678f68e72a3b827a849137b';

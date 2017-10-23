@@ -4,6 +4,9 @@ namespace App\Lib;
 use Firebase\JWT\JWT,
     Exception;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class AuthCliente
 {
     private static $secret_key_client = '6704d29fe9fc7cd1db92a351b985d0f53b939790';

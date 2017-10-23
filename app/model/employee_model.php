@@ -4,6 +4,9 @@ namespace App\Model;
 use App\Lib\Database;
 use App\Lib\Response;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class EmployeeModel
 {
     private $db;
@@ -16,26 +19,17 @@ class EmployeeModel
         $this->response = new Response();
     }
     
-    public function GetAll($l,$p)
+    public function GetAll()
     {
 		try
 		{
-            $stm = $this->db->prepare("CALL SP_EMPLEADO_Lista(:l,:p)");
-            $stm->bindParam(':l', $l);
-            $stm->bindParam(':p', $p);
-            $stm->execute();
-            $data = $stm->fetchAll();
-            unset($stm);
-
-            $stm = $this->db->prepare("CALL SP_EMPLEADO_Count");
-            $stm->execute();
-            $total = $stm->fetch();
+            $stm = $this->db->prepare("CALL SP_EMPLEADO_sel()");
+           $stm->execute();
             
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
             
-            return [
-                'data'  => $data,
-                'total' => $total->total
-            ];
+            return $this->response;
 		}
 		catch(Exception $e)
 		{
@@ -44,14 +38,14 @@ class EmployeeModel
 		}
     }
     
-    public function Get($idEmpleado)
+    public function Get($id)
     {
 		try
 		{
 			$result = array();
 
 			$stm = $this->db->prepare("CALL SP_EMPLEADO_Sel(:id)");
-			$stm->bindParam(':id', $idEmpleado);
+			$stm->bindParam(':id', $id);
             $stm->execute();
 
 			$this->response->setResponse(true);
@@ -70,23 +64,37 @@ class EmployeeModel
     {
 		try 
 		{
-            if(isset($data['idEmpleado']))
+            $date = date('Y-m-d H:i:s');
+            if(isset($data['id']))
             {   
-                if($data['Pass'] != ''){
-                    $contra = sha1('pmti'.$data['Pass']);
+                if($data['pass'] != ''){
+                    $contra = sha1('pmti'.$data['pass']);
                 }else{
                     $contra = "";
                 }
 
-                $stm = $this->db->prepare("CALL SP_EMPLEADO_Upd(:idEmpleado,:Nombre,:Apellido,:Email,:Acceso,:Usuario,:Pass)");
-                $stm->bindParam(':idEmpleado', $data['idEmpleado']);
-                $stm->bindParam(':Nombre', $data['Nombre']);
-                $stm->bindParam(':Apellido', $data['Apellido']);
-                $stm->bindParam(':Email', $data['Email']);
-                $stm->bindParam(':Acceso', $data['Acceso']);
-                $stm->bindParam(':Usuario', $data['Usuario']);
-                $stm->bindParam(':Pass', $contra);
-                
+                if(isset($data['pass'])){
+                    $contra = sha1('pmti'.$data['pass']);
+                    $stm = $this->db->prepare("CALL SP_EMPLEADO_Upd(:nombre,:apellido,:email,:acceso,:usuario,:pass,:fechamodificacion,:id)");
+                    $stm->bindParam(':nombre', $data['nombre']);
+                    $stm->bindParam(':apellido', $data['apellido']);
+                    $stm->bindParam(':email', $data['correo']);
+                    $stm->bindParam(':acceso', $data['acceso']);
+                    $stm->bindParam(':usuario', $data['usuario']);
+                    $stm->bindParam(':pass', $contra);
+                    $stm->bindParam(':id', $data['id']);
+                    $stm->bindParam(':fechamodificacion', $date);
+
+                }else{
+                    $stm = $this->db->prepare("CALL SP_EMPLEADO_UpdSP(:nombre,:apellido,:email,:acceso,:usuario,:fechamodificacion,:id)");
+                    $stm->bindParam(':nombre', $data['nombre']);
+                    $stm->bindParam(':apellido', $data['apellido']);
+                    $stm->bindParam(':email', $data['correo']);
+                    $stm->bindParam(':acceso', $data['acceso']);
+                    $stm->bindParam(':usuario', $data['usuario']);
+                    $stm->bindParam(':id', $data['id']);
+                    $stm->bindParam(':fechamodificacion', $date);
+                }
                 
                 $stm->execute();
 
@@ -95,22 +103,27 @@ class EmployeeModel
             else
             {   
                 
-                if(isset($data['Pass'])){
-                    $contra = sha1('pmti'.$data['Pass']);
-                    $stm = $this->db->prepare("CALL SP_EMPLEADO_Ins(:Nombre,:Apellido,:Email,:Acceso,:Usuario,:Pass)");
-                    $stm->bindParam(':Nombre', $data['Nombre']);
-                    $stm->bindParam(':Apellido', $data['Apellido']);
-                    $stm->bindParam(':Email', $data['Email']);
-                    $stm->bindParam(':Acceso', $data['Acceso']);
-                    $stm->bindParam(':Usuario', $data['Usuario']);
-                    $stm->bindParam(':Pass', $contra);
+                if(isset($data['pass'])){
+                    $contra = sha1('pmti'.$data['pass']);
+                    $stm = $this->db->prepare("CALL SP_EMPLEADO_Ins(:nombre,:apellido,:email,:acceso,:usuario,:pass,:fechacreacion,:fechamodificacion)");
+                    $stm->bindParam(':nombre', $data['nombre']);
+                    $stm->bindParam(':apellido', $data['apellido']);
+                    $stm->bindParam(':email', $data['correo']);
+                    $stm->bindParam(':acceso', $data['acceso']);
+                    $stm->bindParam(':usuario', $data['usuario']);
+                    $stm->bindParam(':pass', $contra);
+                    $stm->bindParam(':fechacreacion', $date);
+                    $stm->bindParam(':fechamodificacion', $date);
+
                 }else{
-                    $stm = $this->db->prepare("CALL SP_EMPLEADO_Ins(:Nombre,:Apellido,:Email,:Acceso,:Usuario)");
-                    $stm->bindParam(':Nombre', $data['Nombre']);
-                    $stm->bindParam(':Apellido', $data['Apellido']);
-                    $stm->bindParam(':Email', $data['Email']);
-                    $stm->bindParam(':Acceso', $data['Acceso']);
-                    $stm->bindParam(':Usuario', $data['Usuario']);
+                    $stm = $this->db->prepare("CALL SP_EMPLEADO_Ins(:nombre,:apellido,:email,:acceso,:usuario,:fechacreacion,:fechamodificacion)");
+                    $stm->bindParam(':nombre', $data['nombre']);
+                    $stm->bindParam(':apellido', $data['apellido']);
+                    $stm->bindParam(':email', $data['correo']);
+                    $stm->bindParam(':acceso', $data['acceso']);
+                    $stm->bindParam(':usuario', $data['usuario']);
+                    $stm->bindParam(':fechacreacion', $date);
+                    $stm->bindParam(':fechamodificacion', $date);
                 }
                 $stm->execute();
                
@@ -124,12 +137,12 @@ class EmployeeModel
 		}
     }
     
-    public function Delete($idEmpleado)
+    public function Delete($id)
     {
 		try 
 		{
-            $stm = $this->db->prepare("CALL SP_EMPLEADO_Del(:idEmpleado)");
-            $stm->bindParam(':idEmpleado', $idEmpleado);
+            $stm = $this->db->prepare("CALL SP_EMPLEADO_Del(:id)");
+            $stm->bindParam(':id', $id);
             $stm->execute();
 			
 			$this->response->setResponse(true);

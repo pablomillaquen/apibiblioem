@@ -5,6 +5,9 @@ use App\Lib\Database;
 use App\Lib\Response;
 use App\Lib\Auth;
 
+/**
+ * @SWG\Definition(type="object")
+ */
 class AuthModel
 {
     private $db;
@@ -17,7 +20,7 @@ class AuthModel
         $this->response = new Response();
     }
     
-    public function Autenticar($email,$pass)
+    public function Autenticar($correo,$pass)
     {
 	   
         try
@@ -25,7 +28,7 @@ class AuthModel
             $result = array();
             $contra = sha1('pmti'.$pass);
             $stm = $this->db->prepare("CALL SP_AUTH_Sel(:email,:pass)");
-            $stm->bindParam(':email', $email);
+            $stm->bindParam(':email', $correo);
             $stm->bindParam(':pass', $contra);
             $stm->execute();
 
@@ -37,7 +40,7 @@ class AuthModel
                     'id' => $empleado->id,
                     'nombre' => $empleado->nombre,
                     'apellido' => $empleado->apellido,
-                    'email' => $empleado->email,
+                    'correo' => $empleado->email,
                     'acceso' => $empleado->acceso,
                     'user' => $empleado->usuario
                     ]);
