@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 23-10-2017 a las 09:03:07
--- Versión del servidor: 5.7.19-0ubuntu0.17.04.1
+-- Tiempo de generación: 24-10-2017 a las 10:58:23
+-- Versión del servidor: 5.7.20-0ubuntu0.17.04.1
 -- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -272,7 +272,19 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MODELO_sel` ()  BEGIN
     ti.`TIP_nombre` as tipoequipo,
     mo.`MAR_id` as idMarca,
     ma.`MAR_nombre` as marca,
-    mo.`MOD_foto` as foto
+    mo.`MOD_foto` as foto,
+    (SELECT COUNT(*)
+	FROM `pm_manual`
+	WHERE `MOD_id`=id) as numManuales,
+    (SELECT COUNT(*)
+	FROM `pm_protocolo`
+	WHERE `MOD_id`=id) as numProtocolos,
+    (SELECT COUNT(*)
+	FROM `pm_torpedo`
+	WHERE `MOD_id`=id) as numTorpedos,
+    (SELECT COUNT(*)
+	FROM `pm_mod_rep`
+	WHERE `MOD_id`=id) as numRepuestos
   FROM `pm_modelo` as mo
   INNER JOIN `pm_marca` as ma
   ON mo.`MAR_id`=ma.`MAR_id`
