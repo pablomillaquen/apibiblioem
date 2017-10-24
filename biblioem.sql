@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6deb4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost:3306
--- Tiempo de generación: 24-10-2017 a las 10:58:23
--- Versión del servidor: 5.7.20-0ubuntu0.17.04.1
--- Versión de PHP: 5.6.31-6+ubuntu17.04.1+deb.sury.org+1
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 24-10-2017 a las 22:55:16
+-- Versión del servidor: 10.1.19-MariaDB
+-- Versión de PHP: 5.6.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -354,12 +356,12 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_MOD_REP_selxmodelo` (IN `id` INT)  BEGIN
   SELECT
-    mr.`MOD_id`,
-    mr.`REP_id`,
-    re.`REP_nombre`,
-    re.`REP_referencia`,
-    re.`REP_foto`,
-    re.`REP_descripcion`
+    mr.`MOD_id` as idMod,
+    mr.`REP_id` as idRep,
+    re.`REP_nombre` as nombre,
+    re.`REP_referencia` as referencia,
+    re.`REP_foto` as foto,
+    re.`REP_descripcion` as descripcion
   FROM `pm_mod_rep` as mr
   INNER JOIN `pm_repuesto` as re 
   ON mr.`REP_id`=re.`REP_id`
@@ -505,7 +507,7 @@ BEGIN
   INNER JOIN `pm_repuesto` as re
   ON mr.`REP_id`=re.`REP_id`
   WHERE mr.`MOD_REP_estado` = 1
-  AND mr.`REP_id` = id;
+  AND mr.`MOD_id` = id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_REPUESTO_upd` (IN `nombre` VARCHAR(45), IN `referencia` VARCHAR(50), IN `descripcion` LONGTEXT, IN `foto` VARCHAR(100), IN `fechamodificacion` DATETIME, IN `id` INT)  BEGIN
@@ -676,7 +678,7 @@ CREATE TABLE `pm_empleado` (
 
 INSERT INTO `pm_empleado` (`EMP_id`, `EMP_nombre`, `EMP_apellido`, `EMP_email`, `EMP_acceso`, `EMP_user`, `EMP_pass`, `EMP_fechacreacion`, `EMP_fechamodificacion`, `EMP_estado`) VALUES
 (1, 'pablo', 'millaquén', 'pablo@pablo.cl', 1, 'pablo', '02293f42fd94989f555b30e02c22fd3b1a2809e6', '2017-10-16 00:00:00', '2017-10-20 16:51:24', 1),
-(2, 'Roberto', 'García', 'roberto@biomedica.cl', 0, 'roberto', 'b02e2275ba3df935a2a711b0297e74db8c4d56a4', '2017-10-20 16:52:27', '2017-10-20 16:52:44', 1),
+(2, 'Roberto', 'García', 'roberto@bicicleta.cl', 0, 'roberto', 'b02e2275ba3df935a2a711b0297e74db8c4d56a4', '2017-10-20 16:52:27', '2017-10-20 16:52:44', 1),
 (3, 'Yanko', 'Jaramillo', 'janko@ruso.cl', 0, 'janko', '8175a6556ca7aedc632c32cb6d4555d508893fbf', '2017-10-20 16:54:04', '2017-10-20 16:54:04', 1);
 
 -- --------------------------------------------------------
@@ -701,18 +703,44 @@ CREATE TABLE `pm_manual` (
 --
 
 INSERT INTO `pm_manual` (`MAN_id`, `MAN_nombre`, `MAN_ubicacion`, `MAN_url`, `MOD_id`, `MAN_fechacreacion`, `MAN_fechamodificacion`, `MAN_estado`) VALUES
-(1, 'Manual Servicio', 'M-68', 'manual-1507660709-M1031914-02_CC5_MANUAL DE SERVICIO.pdf', 2, '2017-10-10 20:38:31', '2017-10-10 20:59:04', 1),
-(2, 'Manual Servicio', 'R-261', 'manual-1507841252-ATL HDI 5000 Service Manual.pdf', 3, '2017-10-12 22:47:34', '2017-10-12 22:47:34', 1),
-(3, 'Manual Entrenamiento', '', 'manual-1507841252-ATL HDI 5000 Service Manual.pdf', 3, '2017-10-12 22:48:28', '2017-10-12 22:48:28', 1),
-(4, 'Manual Referencia', '', 'manual-1507841331-ATL HDI 5000 Reference Manual.pdf', 3, '2017-10-12 22:48:53', '2017-10-12 22:48:53', 1),
-(5, 'Listado Errores', '', 'manual-1507841388-86304542-Philips-HDI-5000-Errors (1).pdf', 3, '2017-10-12 22:49:51', '2017-10-12 22:49:51', 1),
-(6, 'Hoja datos técnicos', '', 'manual-1507841426-ATL HDI 5000 Data Sheet.pdf', 3, '2017-10-12 22:50:28', '2017-10-12 22:50:28', 1),
-(7, 'Manual Usuario', '', 'manual-1507841456-Manual usuario HDI500.pdf', 3, '2017-10-12 22:50:58', '2017-10-12 22:50:58', 1),
-(8, 'Uso de desinfectantes y gel', '', 'manual-1507841585-HDI5000 Uso de desinfectantes y gel.pdf', 3, '2017-10-12 22:53:08', '2017-10-12 22:53:08', 1),
-(9, 'Comandos VX Works', '', 'manual-1507841612-HDI5000 VXWorks Commands.pdf', 3, '2017-10-12 22:53:34', '2017-10-12 22:53:34', 1),
-(10, 'Manual Servicio', '', 'manual-1507918898-BV Endura Service Manual.pdf', 6, '2017-10-13 20:21:40', '2017-10-13 20:21:40', 1),
-(11, 'Manual Servicio Avanzado', '', 'manual-1508557232-LOGIQ_9_Proprietary_Manual.pdf', 7, '2017-10-21 00:20:26', '2017-10-21 00:40:32', 1),
-(12, 'Nuevo manual', '', NULL, 7, '2017-10-21 00:28:26', '2017-10-21 00:32:04', 1);
+(13, 'Manual Servicio', '', 'manual-1508854725-manual-1507660709-M1031914-02_CC5_MANUAL DE SERVICIO.pdf', 2, '2017-10-24 16:18:47', '2017-10-24 16:18:47', 1),
+(14, 'Manual Servicio', '', 'manual-1508854759-manual-1507841252-ATL HDI 5000 Service Manual.pdf', 3, '2017-10-24 16:19:20', '2017-10-24 16:19:20', 1),
+(15, 'Manual Referencia', '', 'manual-1508854786-manual-1507841331-ATL HDI 5000 Reference Manual.pdf', 3, '2017-10-24 16:19:47', '2017-10-24 16:19:47', 1),
+(16, 'Códigos Errores', '', 'manual-1508854816-manual-1507841388-86304542-Philips-HDI-5000-Errors (1).pdf', 3, '2017-10-24 16:20:17', '2017-10-24 16:20:17', 1),
+(17, 'Especificaciones Técnicas', '', 'manual-1508854842-manual-1507841426-ATL HDI 5000 Data Sheet.pdf', 3, '2017-10-24 16:20:43', '2017-10-24 16:20:43', 1),
+(18, 'Manual de Usuario', '', 'manual-1508854868-manual-1507841456-Manual usuario HDI500.pdf', 3, '2017-10-24 16:21:09', '2017-10-24 16:21:09', 1),
+(19, 'Uso de Desinfectantes y Gel', '', 'manual-1508854893-manual-1507841585-HDI5000 Uso de desinfectantes y gel.pdf', 3, '2017-10-24 16:21:35', '2017-10-24 16:21:35', 1),
+(20, 'VxWorks Commands', '', 'manual-1508854920-manual-1507841612-HDI5000 VXWorks Commands.pdf', 3, '2017-10-24 16:22:01', '2017-10-24 16:22:01', 1),
+(21, 'Manual Servicio Reparación', '', 'manual-1508854970-manual-1507918898-BV Endura Service Manual.pdf', 6, '2017-10-24 16:22:51', '2017-10-24 16:22:51', 1),
+(22, 'Manual de instalación', '', 'manual-1508856143-manual-1508762325-2922 D ES PP Drystar 5300-A4.pdf', 8, '2017-10-24 16:23:12', '2017-10-24 16:42:24', 1),
+(23, 'Manual Servicio Avanzado', '', 'manual-1508863001-manual-1508761763-LOGIQ_9_Proprietary_Manual.pdf', 20, '2017-10-24 18:36:43', '2017-10-24 18:36:43', 1),
+(24, 'Manual de Uso', '', 'manual-1508863044-manual-1508762295-2921 D ES UM Drystar 5300.pdf', 8, '2017-10-24 18:37:25', '2017-10-24 18:37:25', 1),
+(25, 'Manual de Referencia', '', 'manual-1508863077-manual-1508762529-2920 D EN RM Drystar 5300.pdf', 8, '2017-10-24 18:37:58', '2017-10-24 18:37:58', 1),
+(26, 'Manual de Referencia', '', 'manual-1508863112-manual-1508762669-2900 H EN RM Drystar 5500.pdf', 9, '2017-10-24 18:38:33', '2017-10-24 18:38:33', 1),
+(27, 'Manual de Uso', '', 'manual-1508863128-manual-1508762687-2901 H ES UM Drystar 5500.pdf', 9, '2017-10-24 18:38:49', '2017-10-24 18:38:49', 1),
+(28, 'Manual de Instalación', '', 'manual-1508863158-manual-1508762712-2903 Q ES PP Drystar 5500-A4.pdf', 9, '2017-10-24 18:39:19', '2017-10-24 18:39:19', 1),
+(29, 'Manual de Instalación', '', 'manual-1508863358-manual-1508762933-2851 B ES PP Drystar AXYS-A4.pdf', 10, '2017-10-24 18:42:39', '2017-10-24 18:42:39', 1),
+(30, 'Manual de Uso', '', 'manual-1508863387-manual-1508762948-2852 B ES UM Drystar AXYS.pdf', 10, '2017-10-24 18:43:08', '2017-10-24 18:43:08', 1),
+(31, 'Manual de Uso', '', 'manual-1508863431-manual-1508763871-190730361-Accurus-Operator-Manual.pdf', 14, '2017-10-24 18:43:52', '2017-10-24 18:43:52', 1),
+(32, 'Manual de Servicio', '', 'manual-1508863457-manual-1508764610-GN300-ServiceManual_26906.pdf', 18, '2017-10-24 18:44:18', '2017-10-24 18:44:18', 1),
+(33, 'Manual de Usuario - Parte 1', '', 'manual-1508863482-manual-1508772754-1009-0309a.pdf', 15, '2017-10-24 18:44:43', '2017-10-24 18:44:43', 1),
+(34, 'Manual de Usuario - Parte 2', '', 'manual-1508863496-manual-1508772773-1009-0310a.pdf', 15, '2017-10-24 18:44:57', '2017-10-24 18:44:57', 1),
+(35, 'Manual de Referencia Técnica', '', 'manual-1508863522-manual-1508773030-1009-0356A.pdf', 15, '2017-10-24 18:45:23', '2017-10-24 18:45:23', 1),
+(36, 'Manual Técnico Ventilador 7100', '', 'manual-1508863574-manual-1508773056-1006-0836B.pdf', 15, '2017-10-24 18:46:15', '2017-10-24 18:46:15', 1),
+(37, 'Manual Servicio', '', 'manual-1508863600-manual-1508781498-Cardinal_Alaris_-_Service_Manual.pdf', 23, '2017-10-24 18:46:41', '2017-10-24 18:46:41', 1),
+(38, 'Manual de Uso', '', 'manual-1508863622-manual-1508787326-1000DF00385.pdf', 23, '2017-10-24 18:47:04', '2017-10-24 18:47:04', 1),
+(39, 'Manual de Servicio', '', 'manual-1508863659-manual-1508789142-Alcon_Phaco_machine_Series_20000_Legacy_-_Service_manual.pdf', 13, '2017-10-24 18:47:40', '2017-10-24 18:47:40', 1),
+(40, 'Manual de Operador', '', 'manual-1508863682-manual-1508789173-Alcon OcuScan RxP Ophthamic Ultrasound System - User manual.pdf', 22, '2017-10-24 18:48:03', '2017-10-24 18:48:03', 1),
+(41, 'Manual de Servicio', '', 'manual-1508863702-manual-1508789200-Alcon Infiniti Ophthalmic Surgical Instrument - Service manual.pdf', 19, '2017-10-24 18:48:23', '2017-10-24 18:48:23', 1),
+(42, 'Manual del Operador', '', 'manual-1508863737-manual-1508789217-Alcon Infiniti - Operator\'s manual.pdf', 19, '2017-10-24 18:48:58', '2017-10-24 18:48:58', 1),
+(43, 'Procedimiento Test de Servicio', '', 'manual-1508863769-manual-1508789259-4097-7225.pdf', 19, '2017-10-24 18:49:30', '2017-10-24 18:49:30', 1),
+(44, 'Especificaciones Técnicas', '', 'manual-1508863804-manual-1508791901-Alice 5.pdf', 16, '2017-10-24 18:50:05', '2017-10-24 18:50:05', 1),
+(45, 'Guía Técnicos Paramédicos', '', 'manual-1508863831-manual-1508791941-GuÃ­a tÃ©cnicos PSG_MGM.pdf', 16, '2017-10-24 18:50:32', '2017-10-24 18:50:32', 1),
+(46, 'Manual Software Sleepware', '', 'manual-1508863853-manual-1508791974-SleepwareManual_es.pdf', 16, '2017-10-24 18:50:54', '2017-10-24 18:50:54', 1),
+(47, 'Modos de Configuración', '', 'manual-1508863879-manual-1508791995-MODOS DE CONFIGURACIÃ“N ALICE 5.doc', 16, '2017-10-24 18:51:21', '2017-10-24 18:51:21', 1),
+(48, 'Modos Alice 5 (Portugués)', '', 'manual-1508863905-manual-1508792043-Manual Alice 5 (portuguÃ©s).pdf', 16, '2017-10-24 18:51:47', '2017-10-24 18:51:47', 1),
+(49, 'Manual Uso', '', 'manual-1508863933-manual-1508792395-Pierneras Allen (PAL Pro).pdf', 17, '2017-10-24 18:52:14', '2017-10-24 18:52:14', 1),
+(50, 'Manual Usuario', '', 'manual-1508877944-20100304095506698.pdf', 25, '2017-10-24 22:45:46', '2017-10-24 22:45:46', 1);
 
 -- --------------------------------------------------------
 
@@ -791,7 +819,14 @@ INSERT INTO `pm_marca` (`MAR_id`, `MAR_nombre`, `MAR_fechacreacion`, `MAR_fecham
 (56, 'Thermo', '2017-10-10 15:42:49', '2017-10-10 15:42:49', 1),
 (57, 'Toshiba', '2017-10-10 15:43:03', '2017-10-10 15:43:03', 1),
 (58, 'Valleylab', '2017-10-10 15:43:13', '2017-10-10 15:43:13', 1),
-(59, 'Carl Zeiss', '2017-10-10 15:43:27', '2017-10-10 15:43:27', 1);
+(59, 'Carl Zeiss', '2017-10-10 15:43:27', '2017-10-10 15:43:27', 1),
+(60, 'Datex-Ohmeda', '2017-10-24 16:27:16', '2017-10-24 16:27:16', 1),
+(61, 'Alcon', '2017-10-24 16:32:14', '2017-10-24 16:32:14', 1),
+(62, 'Allen', '2017-10-24 16:32:32', '2017-10-24 16:32:32', 1),
+(63, 'Respironics', '2017-10-24 16:34:19', '2017-10-24 16:34:19', 1),
+(64, 'Maxtec', '2017-10-24 22:42:41', '2017-10-24 22:42:41', 1),
+(65, 'Villa Sistemi Medicali', '2017-10-24 22:52:45', '2017-10-24 22:52:45', 1),
+(66, '', '2017-10-24 22:53:17', '2017-10-24 22:53:17', 1);
 
 -- --------------------------------------------------------
 
@@ -821,7 +856,26 @@ INSERT INTO `pm_modelo` (`MOD_id`, `MOD_nombre`, `TIP_id`, `MAR_id`, `MOD_foto`,
 (4, 'B650', 1, 2, 'image-1507593266-b650.jpg', '2017-10-09 20:46:54', '2017-10-09 23:48:38', 1),
 (5, 'M-Series', 5, 16, 'image-1507643996-zollm.jpg', '2017-10-10 15:59:00', '2017-10-10 15:59:59', 1),
 (6, 'Endura BV', 9, 5, 'image-1507924868-70721-104851.jpg', '2017-10-13 20:21:03', '2017-10-13 22:01:10', 1),
-(7, 'Logic9', 3, 2, 'image-1508555363-logic9-thumb.jpg', '2017-10-21 00:09:23', '2017-10-21 00:09:23', 1);
+(7, 'M-Series', 5, 16, 'image-1508855393-zollm.jpg', '2017-10-21 00:09:23', '2017-10-24 16:29:54', 0),
+(8, 'Drystar 5300', 10, 28, 'image-1508855114-5300.jpg', '2017-10-24 16:25:16', '2017-10-24 16:25:16', 1),
+(9, 'Drystar 5500', 10, 28, 'image-1508855133-5500.jpg', '2017-10-24 16:25:34', '2017-10-24 16:25:34', 1),
+(10, 'Drystar AXYS', 10, 28, 'image-1508855149-axys.jpg', '2017-10-24 16:25:50', '2017-10-24 16:25:50', 1),
+(11, 'Avea', 2, 25, 'image-1508855177-avea.jpg', '2017-10-24 16:26:18', '2017-10-24 16:26:18', 1),
+(12, 'Cardioserv', 5, 60, 'image-1508855265-cardioserv.jpg', '2017-10-24 16:27:46', '2017-10-24 16:27:46', 1),
+(13, 'Legacy 2000 Series', 12, 61, 'image-1508855595-2000legacy.jpg', '2017-10-24 16:33:16', '2017-10-24 16:33:16', 1),
+(14, 'Accurus', 11, 61, 'image-1508855610-accurus.jpg', '2017-10-24 16:33:32', '2017-10-24 16:33:32', 1),
+(15, 'Aespire S/5', 7, 60, 'image-1508855640-aespire.jpg', '2017-10-24 16:34:01', '2017-10-24 16:34:01', 1),
+(16, 'Alice 5', 15, 63, 'image-1508855691-alice_5.jpg', '2017-10-24 16:34:52', '2017-10-24 16:34:52', 1),
+(17, 'Pal PRO', 16, 62, 'image-1508855710-allen.jpg', '2017-10-24 16:35:11', '2017-10-24 16:35:11', 1),
+(18, 'GN300', 13, 4, 'image-1508855729-gn300.jpg', '2017-10-24 16:35:32', '2017-10-24 16:35:32', 1),
+(19, 'Infiniti', 12, 61, 'image-1508855745-infiniti.jpg', '2017-10-24 16:35:46', '2017-10-24 16:35:46', 1),
+(20, 'Logic9', 3, 2, 'image-1508855858-logic9.jpg', '2017-10-24 16:37:39', '2017-10-24 16:37:39', 1),
+(21, 'MAC500', 18, 60, 'image-1507592634-default.jpg', '2017-10-24 16:38:43', '2017-10-24 16:38:43', 1),
+(22, 'Ocuscan', 17, 61, 'image-1508855940-ocuscan.jpg', '2017-10-24 16:39:01', '2017-10-24 16:39:01', 1),
+(23, 'Alaris Tiva', 14, 25, 'image-1508855968-tiva.jpg', '2017-10-24 16:39:29', '2017-10-24 16:39:29', 1),
+(24, 'Infinity Vista', 1, 1, 'image-1508855990-vista.jpg', '2017-10-24 16:39:51', '2017-10-24 16:39:51', 1),
+(25, 'OM-25AE', 19, 64, 'image-1508877902-Maxtec-OM-25AE1.jpg', '2017-10-24 22:45:04', '2017-10-24 22:45:04', 1),
+(26, 'Arcovis 3000', 20, 65, 'image-1508878484-arcovis3000.jpg', '2017-10-24 22:54:11', '2017-10-24 22:54:45', 1);
 
 -- --------------------------------------------------------
 
@@ -842,7 +896,9 @@ CREATE TABLE `pm_mod_rep` (
 --
 
 INSERT INTO `pm_mod_rep` (`MOD_id`, `REP_id`, `MOD_REP_fechacreacion`, `MOD_REP_fechamodificacion`, `MOD_REP_estado`) VALUES
-(1, 1, '2017-10-15 22:49:21', '2017-10-15 22:49:21', 1);
+(1, 1, '2017-10-15 22:49:21', '2017-10-15 22:49:21', 1),
+(14, 2, '2017-10-24 18:59:51', '2017-10-24 18:59:51', 1),
+(24, 3, '2017-10-24 19:00:50', '2017-10-24 19:00:50', 1);
 
 -- --------------------------------------------------------
 
@@ -891,7 +947,9 @@ CREATE TABLE `pm_repuesto` (
 --
 
 INSERT INTO `pm_repuesto` (`REP_id`, `REP_nombre`, `REP_referencia`, `REP_descripcion`, `REP_foto`, `REP_fechacreacion`, `REP_fechamodificacion`, `REP_estado`) VALUES
-(1, 'Sensor oxígeno - Drager', '6850645', 'Sensor oxígeno, para máquina de anestesia', 'repuesto-1508154948-MT-423-2002.jpg', '2017-10-13 16:54:46', '2017-10-16 13:55:50', 1);
+(1, 'Sensor oxígeno - Drager', '6850645', 'Sensor oxígeno, para máquina de anestesia', 'repuesto-1508154948-MT-423-2002.jpg', '2017-10-13 16:54:46', '2017-10-16 13:55:50', 1),
+(2, 'Pila BR2335', 'BR2335', 'Pila de 3V, redonda.', 'repuesto-1508790066-BR2335.jpg', '2017-10-24 18:56:57', '2017-10-24 18:56:57', 1),
+(3, 'Pila CR2450N', 'CR2450N', 'Pila de 3V, redonda, con sección más angosta que la otra', 'repuesto-1508781725-CR2450N.jpg', '2017-10-24 18:59:06', '2017-10-24 18:59:06', 1);
 
 -- --------------------------------------------------------
 
@@ -920,7 +978,18 @@ INSERT INTO `pm_tipoequipo` (`TIP_id`, `TIP_nombre`, `TIP_fechacreacion`, `TIP_f
 (6, 'Refrigerador', '2017-10-09 23:37:14', '2017-10-09 23:37:14', 1),
 (7, 'Máquina Anestesia', '2017-10-09 23:37:31', '2017-10-09 23:37:31', 1),
 (8, 'Microscopio', '2017-10-12 18:29:06', '2017-10-12 18:29:21', 1),
-(9, 'RX Portátil', '2017-10-13 20:20:27', '2017-10-13 20:20:27', 1);
+(9, 'RX Portátil', '2017-10-13 20:20:27', '2017-10-13 20:20:27', 1),
+(10, 'Impresora RX', '2017-10-24 16:24:41', '2017-10-24 16:24:41', 1),
+(11, 'Facovitrector', '2017-10-24 16:30:31', '2017-10-24 16:30:31', 1),
+(12, 'Facoemulsificador', '2017-10-24 16:30:41', '2017-10-24 16:30:41', 1),
+(13, 'Electrobisturí', '2017-10-24 16:31:14', '2017-10-24 16:31:14', 1),
+(14, 'Bomba Jeringa', '2017-10-24 16:31:22', '2017-10-24 16:31:22', 1),
+(15, 'Polismoniógrafo', '2017-10-24 16:31:39', '2017-10-24 16:31:39', 1),
+(16, 'Piernera', '2017-10-24 16:31:45', '2017-10-24 16:31:45', 1),
+(17, 'Ecógrafo ocular', '2017-10-24 16:32:01', '2017-10-24 16:32:01', 1),
+(18, 'Electrocardiógrafo', '2017-10-24 16:38:29', '2017-10-24 16:38:29', 1),
+(19, 'Analizador de Oxígeno', '2017-10-24 22:43:48', '2017-10-24 22:43:48', 1),
+(20, 'Arco C RX', '2017-10-24 22:53:10', '2017-10-24 22:53:10', 1);
 
 -- --------------------------------------------------------
 
@@ -945,7 +1014,8 @@ CREATE TABLE `pm_torpedo` (
 
 INSERT INTO `pm_torpedo` (`TOR_id`, `TOR_titulo`, `TOR_descripcion`, `TOR_url`, `MOD_id`, `TOR_fechacreacion`, `TOR_fechamodificacion`, `TOR_estado`) VALUES
 (1, 'Clave Instalación/Servicio', 'Instalación (16-4-34), Servicio (26-23-8).', '', 2, '2017-10-12 16:57:56', '2017-10-12 17:04:13', 1),
-(2, 'Método solucionar error 008', 'abcdefg', 'apuntes-1507896374-Error 0008.txt', 3, '2017-10-13 00:58:09', '2017-10-13 14:06:17', 1);
+(2, 'Método solucionar error 008', 'abcdefg', 'apuntes-1507896374-Error 0008.txt', 3, '2017-10-13 00:58:09', '2017-10-13 14:06:17', 1),
+(3, 'Cambio Pila CPU SRAM', 'Se requiere cambiar cada 5 años, la pila de CPU SRAM, modelo BR2335, de 3V, ubicada en el interior del equipo', '', 14, '2017-10-24 18:56:10', '2017-10-24 18:56:10', 1);
 
 --
 -- Índices para tablas volcadas
@@ -1018,41 +1088,49 @@ ALTER TABLE `pm_torpedo`
 --
 ALTER TABLE `pm_empleado`
   MODIFY `EMP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_manual`
 --
 ALTER TABLE `pm_manual`
-  MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `MAN_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_marca`
 --
 ALTER TABLE `pm_marca`
-  MODIFY `MAR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `MAR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_modelo`
 --
 ALTER TABLE `pm_modelo`
-  MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `MOD_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_protocolo`
 --
 ALTER TABLE `pm_protocolo`
   MODIFY `PRO_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_repuesto`
 --
 ALTER TABLE `pm_repuesto`
-  MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `REP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_tipoequipo`
 --
 ALTER TABLE `pm_tipoequipo`
-  MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `TIP_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
 --
 -- AUTO_INCREMENT de la tabla `pm_torpedo`
 --
 ALTER TABLE `pm_torpedo`
-  MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `TOR_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- Restricciones para tablas volcadas
 --
@@ -1075,6 +1153,7 @@ ALTER TABLE `pm_mod_rep`
 --
 ALTER TABLE `pm_torpedo`
   ADD CONSTRAINT `fk_PM_TORpedo_PM_MODelo1` FOREIGN KEY (`MOD_id`) REFERENCES `pm_modelo` (`MOD_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
