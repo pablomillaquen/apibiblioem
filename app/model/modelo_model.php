@@ -158,4 +158,26 @@ class ModeloModel
             $this->response->setResponse(false, $e->getMessage());
         }
     }
+
+
+    public function GetAllDropdown()
+    {
+        try
+        {
+            $result = array();
+
+            $stm = $this->db->prepare("CALL SP_MODELO_seldrop()");
+            $stm->execute();
+            
+            $this->response->setResponse(true);
+            $this->response->result = $stm->fetchAll();
+            
+            return $this->response;
+        }
+        catch(Exception $e)
+        {
+            $this->response->setResponse(false, $e->getMessage());
+            return $this->response;
+        }
+    }
 }

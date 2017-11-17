@@ -69,6 +69,19 @@ $app->group('/v1', function () use ($app){
               )
           );
       });
+
+      $this->get('getdd/', function ($req, $res, $args) {
+          $um = new ModeloModel();
+          
+          return $res
+             ->withHeader('Content-type', 'application/json')
+             ->getBody()
+             ->write(
+              json_encode(
+                  $um->GetAllDropdown()
+              )
+          );
+      });
       
     });
   })->add(new AuthMiddleware($app));
